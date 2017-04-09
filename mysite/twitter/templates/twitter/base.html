@@ -1,0 +1,52 @@
+{% load static %}
+<html>
+  <head>
+    <title>Twitter</title>
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap-theme.min.css">
+  </head>
+  <body>
+      <div class="page-header">
+        <ul class="nav nav-pills">
+          {% if user.is_authenticated %}
+            <li role="presentation" class="active">
+              <a href="#">
+                <span class="glyphicon glyphicon-home"></span>
+                <span>Home</span></a>
+            </li>
+            <li role="presentation">
+              <a href="#">
+                <span class="glyphicon glyphicon-bell"></span>
+                <span>Notifications</span></a>
+            </li>
+            <li role="presentation">
+              <a href="#">
+                <span class="glyphicon glyphicon-user"></span>
+                <span>Profile</span></a>
+            </li>
+            <li role="presentation">
+              <a href="#">
+                <span class="glyphicon glyphicon-edit"></span>
+                <span>Tweet</span>
+              </a>
+            </li>
+            <li>
+              <a href="#">Login Out</a>
+            </li>
+          {% else %}
+            <li>
+              <a href="{% url 'login' %}">Login In</a>
+            </li>
+          {% endif %}
+        </ul>
+      </div>
+      <div class="content container">
+        <div class="row">
+          <div class="col-md-8">
+              {% block main %}
+              {%endblock %}
+          </div>
+        </div>
+      </div>
+  </body>
+</html>
