@@ -1,0 +1,23 @@
+{
+  "name": "twitter",
+  "version": "0.0.0",
+  "authors": [
+    "ainesmile <ainesmile@gmail.com>"
+  ],
+  "description": "A Django Simple Twitter",
+  "keywords": [
+    "django",
+    "twitter"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "devDependencies": {
+    "bootstrap": "~3.3.7"
+  }
+}
