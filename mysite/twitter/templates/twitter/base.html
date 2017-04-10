@@ -2,15 +2,16 @@
 <html>
   <head>
     <title>Twitter</title>
-    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
-    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap-theme.min.css">
+    <link rel="stylesheet" type="text/css" href="{% static 'twitter/lib/bootstrap/dist/css/bootstrap.min.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'twitter/lib/bootstrap/dist/css/bootstrap-theme.min.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'twitter/main.css' %}">
   </head>
   <body>
       <div class="page-header">
         <ul class="nav nav-pills">
           {% if user.is_authenticated %}
             <li role="presentation" class="active">
-              <a href="#">
+              <a href="{% url 'tweet_list' %}">
                 <span class="glyphicon glyphicon-home"></span>
                 <span>Home</span></a>
             </li>
@@ -25,11 +26,12 @@
                 <span>Profile</span></a>
             </li>
             <li role="presentation">
-              <a href="#">
+              <a href="{% url 'add_tweet' %}">
                 <span class="glyphicon glyphicon-edit"></span>
                 <span>Tweet</span>
               </a>
             </li>
+
             <li>
               <a href="{% url 'logout' %}">Login Out</a>
             </li>
