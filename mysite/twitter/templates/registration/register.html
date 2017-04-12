@@ -1,0 +1,18 @@
+{% extends "twitter/base.html" %}
+
+{% block main %}
+  {% if form.errors %}
+    <p>Please try again.</p>
+  {% endif %}
+
+  <form method="post" action="{% url 'register' %}">
+    {% csrf_token %}
+    <label class="form-control-label">Join Twitter today.</label>
+    <input class="form-control" type="text" name="username" placeholder="username"></input>
+    <input class="form-control" type="email" name="email" placeholder="email"></input>
+    <input class="form-control" type="password" name="password" placeholder="password"></input>
+    <button class="btn button-base-color" type="submit" value="register" >
+      Sign up
+    </button>
+  </form>
+{% endblock %}
