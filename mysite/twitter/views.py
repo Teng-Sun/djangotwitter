@@ -1,5 +1,6 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth.models import User
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
 from .models import Tweet
 from .forms import TweetForm, RegistrationForm
@@ -22,8 +23,13 @@ def add_tweet(request):
     })
 
 def profile(request):
+    tweet_list = request.user.tweet_set.all()
+    paginate_by = 5
+    tweets = pagination(request, tweet_list, paginate_by)
     return render(request, 'twitter/profile.html', {
-        'user': request.user
+        'user': request.user,
+        'tweets': tweets,
+        'object_list': tweets,
     })
 
 def register(request):
@@ -44,3 +50,15 @@ def register(request):
     return render(request, 'registration/register.html', {
         'form': form,
     })
+
+
+def pagination(request, objcet_list, paginate_by):
+    paginator = Paginator(objcet_list, paginate_by)
+    page = request.GET.get('page', 1)
+    try:
+        result = paginator.page(page)
+    except PageNotAnInteger:
+        result = paginator.page(1)
+    except EmptyPage:
+        result = paginator.page(paginator.num_pages)
+    return result

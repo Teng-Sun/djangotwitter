@@ -1,5 +1,6 @@
 {% extends "./base.html" %}
 {% load humanize %}
+
 {% block main %}
   <div>
     <ul class="nav nav-tabs nav-justified">
@@ -9,7 +10,7 @@
     </ul>
   </div>
   <div>
-    {% for tweet in user.tweet_set.all %}
+    {% for tweet in tweets %}
       <div>
         <hr>
         <div>
@@ -39,4 +40,7 @@
       </button>
     {% endfor %}
   </div>
+
+  {% include "./pagination.html" %}
+
 {% endblock %}
