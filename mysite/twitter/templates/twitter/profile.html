@@ -1,0 +1,42 @@
+{% extends "./base.html" %}
+{% load humanize %}
+{% block main %}
+  <div>
+    <ul class="nav nav-tabs nav-justified">
+      <li>Tweets &nbsp; <span class="badge">{{ user.tweet_set.all|length }}</span></li>
+      <li>FOLLOWING &nbsp; <span>{{ following|length }}</span></li>
+      <li>LIKES &nbsp; <span>{{ likes|length }}</span></li>
+    </ul>
+  </div>
+  <div>
+    {% for tweet in user.tweet_set.all %}
+      <div>
+        <hr>
+        <div>
+          <span>@{{ user.username }}</span>
+          <small class="time">{{ tweet.created_date|naturaltime }}</small>
+        </div>
+        <p>{{ tweet.content }}</p>
+        <div>
+          <a href="">
+            <span class="glyphicon glyphicon-share-alt reply-icon"></span>
+          </a>
+          <a href="">
+            <span class="glyphicon glyphicon-retweet reply-icon"></span>
+          </a>
+          <a href="">
+            <span class="glyphicon glyphicon-heart reply-icon"></span>
+          </a>
+          <a href="">
+            <span class="glyphicon glyphicon-trash reply-icon"></span>
+          </a>
+        </div>
+      </div>
+    {% empty %}
+      <button class="btn button-base-color">
+        <span class="glyphicon glyphicon-edit"></span>
+        <span>Tweet Now</span>
+      </button>
+    {% endfor %}
+  </div>
+{% endblock %}

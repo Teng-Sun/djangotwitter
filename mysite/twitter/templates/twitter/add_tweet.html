@@ -4,7 +4,7 @@
   <form class="form-group post-form" method="POST">
     {% csrf_token %}
     <label class="form-control-label" for="inputSuccess1">Compose new Tweet</label>
-    <input type="text" class="form-control form-control-success input-lg" placeholder="What's happening?">
+    <input type="text" class="form-control form-control-success input-lg" placeholder="What's happening?" name="content">
     <button class="btn button-base-color button-right" type="submit">
       <span class="glyphicon glyphicon-edit"></span>
       <span>Tweet</span>
