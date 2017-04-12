@@ -2,27 +2,17 @@ from __future__ import unicode_literals
 
 from django.db import models
 from django.utils import timezone
-
-class Following(models.Model):
-    username = models.CharField(max_length=200)
-    joined_date = models.DateTimeField()
-    bio = models.TextField()
-
-    def __str__(self):
-        return self.username
-
-    class Meta:
-        ordering = ['joined_date']
+from django.contrib.auth.models import User
 
 class Tweet(models.Model):
-    author = models.ForeignKey(Following)
-    context = models.TextField()
+    author = models.ForeignKey(User)
+    content = models.TextField()
     created_date = models.DateTimeField(
         default = timezone.now
     )
 
     def __str__(self):
-        return self.author
+        return self.content
 
     class Meta:
         ordering = ['-created_date']
