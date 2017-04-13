@@ -12,16 +12,15 @@
   <div>
     {% if tweets %}
       {% include "./tweet_list.html" %}
+      {% include "./pagination.html" %}
     {% else %}
-      <a href="{% url 'add_tweet' %}">
-        <button class="btn button-base-color">
-          <span class="glyphicon glyphicon-edit"></span>
-          <span>Tweet Now</span>
-        </button>
-      </a>
+      <div class="jumbotron no-tweet">
+        <h1>Hello, world!</h1>
+        <p>No tweet yet!</p>
+        <p>
+          <a class="btn btn-primary btn-lg" href="{% url 'explore' %}" role="button">Explore</a>
+        </p>
+      </div>
     {% endif %}
   </div>
-
-  {% include "./pagination.html" %}
-
 {% endblock %}

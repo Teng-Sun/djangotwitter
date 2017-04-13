@@ -15,19 +15,20 @@ def add_tweet(request):
             tweet = form.save(commit=False)
             tweet.author = request.user
             tweet.save()
-            return redirect('/profile/')
+            return redirect('profile', username=request.user.username)
     else:
         form = TweetForm()
     return render(request, 'twitter/add_tweet.html', {
         'form': form,
     })
 
-def profile(request):
-    tweet_list = request.user.tweet_set.all()
+def profile(request, username):
+    user = User.objects.get(username=username)
+    tweet_list = user.tweet_set.all()
     paginate_by = 10
     tweets = pagination(request, tweet_list, paginate_by)
     return render(request, 'twitter/profile.html', {
-        'user': request.user,
+        'user': user,
         'tweets': tweets,
         'object_list': tweets,
     })
