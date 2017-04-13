@@ -2,8 +2,8 @@ from django.shortcuts import render, redirect
 from django.contrib.auth.models import User
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
-from .models import Tweet
-from .forms import TweetForm, RegistrationForm
+from .models import Tweet, Followship
+from .forms import TweetForm, RegistrationForm, FollowForm
 
 def index(request):
     return render(request, 'twitter/index.html')
@@ -23,14 +23,19 @@ def add_tweet(request):
     })
 
 def profile(request, username):
-    user = User.objects.get(username=username)
-    tweet_list = user.tweet_set.all()
+    login_user = request.user
+    visited_user = User.objects.get(username=username)
+    tweet_list = visited_user.tweet_set.all()
     paginate_by = 10
     tweets = pagination(request, tweet_list, paginate_by)
+    following = Followship.objects.filter(initiative_user=visited_user).all()
+    follower = Followship.objects.filter(followed_user=visited_user).all()
     return render(request, 'twitter/profile.html', {
-        'user': user,
+        'visited_user': visited_user,
         'tweets': tweets,
         'object_list': tweets,
+        'following': following,
+        'follower': follower,
     })
 
 def register(request):
@@ -68,9 +73,18 @@ def explore(request):
     })
 
 
-
-
-
+def follow(request, username):
+    login_user = request.user
+    visited_user = User.objects.get(username=username)
+    if login_user != visited_user and request.method == 'POST':
+        form = FollowForm(request.POST)
+        form.save(commit=False)
+        follow = Followship(
+            followed_user = visited_user,
+            initiative_user = login_user,
+        )
+        follow.save()
+    return redirect('profile', username=username)
 
 
 def pagination(request, objcet_list, paginate_by):

@@ -17,4 +17,16 @@ class Tweet(models.Model):
     class Meta:
         ordering = ['-created_date']
 
+class Followship(models.Model):
+    followed_user = models.ForeignKey(
+        User,
+        related_name='followings', 
+        on_delete=models.CASCADE,
+    )
+    initiative_user = models.ForeignKey(
+        User,
+        related_name='followers',
+        on_delete=models.CASCADE,
+    )
+    date_follow = models.DateTimeField(default=timezone.now)
 

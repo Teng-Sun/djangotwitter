@@ -1,0 +1,11 @@
+{% extends "./base.html" %}
+
+{% block main %}
+  {% if followings %}
+    {% for following in followings %}
+      {{ following.username }}
+    {% empty %}
+      <a href="{% url 'explore' %}">Explore</a>
+    {% endfor %}
+  {% endif %}
+{% endblock %}
