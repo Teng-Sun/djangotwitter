@@ -1,0 +1,14 @@
+{% extends "./base.html" %}
+
+{% block main %}
+  {% if tweets %}
+      {% include "./tweet_list.html" %}
+    {% else %}
+      <a href="{% url 'add_tweet' %}">
+        <button class="btn button-base-color">
+          <span class="glyphicon glyphicon-edit"></span>
+          <span>Tweet Now</span>
+        </button>
+      </a>
+    {% endif %}
+{% endblock %}

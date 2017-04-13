@@ -11,7 +11,7 @@
         <ul class="nav nav-pills">
           {% if user.is_authenticated %}
             <li role="presentation" class="active">
-              <a href="{% url 'tweet_list' %}">
+              <a href="{% url 'index' %}">
                 <span class="glyphicon glyphicon-home"></span>
                 <span>Home</span></a>
             </li>
@@ -41,6 +41,9 @@
             </li>
             <li>
               <a href="{% url 'register' %}">Sign Up</a>
+            </li>
+            <li>
+              <a href="{% url 'explore' %}">Explore</a>
             </li>
           {% endif %}
         </ul>

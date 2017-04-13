@@ -5,8 +5,8 @@ from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from .models import Tweet
 from .forms import TweetForm, RegistrationForm
 
-def tweet_list(request):
-    return render(request, 'twitter/tweet_list.html', {})
+def index(request):
+    return render(request, 'twitter/index.html')
 
 def add_tweet(request):
     if request.method == 'POST':
@@ -24,7 +24,7 @@ def add_tweet(request):
 
 def profile(request):
     tweet_list = request.user.tweet_set.all()
-    paginate_by = 5
+    paginate_by = 10
     tweets = pagination(request, tweet_list, paginate_by)
     return render(request, 'twitter/profile.html', {
         'user': request.user,
@@ -50,6 +50,26 @@ def register(request):
     return render(request, 'registration/register.html', {
         'form': form,
     })
+
+
+def explore(request):
+    user_list = User.objects.all()
+    tweet_list = []
+    tweets = []
+    if user_list:
+        for user in user_list:
+            if user.tweet_set.all():
+                tweet_list.append(user.tweet_set.all()[0])
+    paginate_by = 10
+    tweets = pagination(request, tweet_list, paginate_by)
+    return render(request, 'twitter/explore.html', {
+        'tweets': tweets,
+    })
+
+
+
+
+
 
 
 def pagination(request, objcet_list, paginate_by):

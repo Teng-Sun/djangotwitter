@@ -1,32 +1,26 @@
-{% extends './base.html' %}
+{% load humanize %}
 
-{% block main %}
-  {% if user.is_authenticated %}
-    {% if tweets%}
-      {% for tweet in tweets %}
-        <span>{{ tweet.author }}</span>
-        <span>{{ tweet.created_date }}</span>
-        <p>{{ tweet.context }}</p>
-        <a href="#">
-          <span clas="glyphicon glyphicon glyphicon-share"></span>
-        </a>
-        <a href="#">
-          <span clas="glyphicon glyphicon-heart"></span>
-        </a>
-        <a href="#">
-          <span clas="glyphicon glyphicon-retweet"></span>
-        </a>
-      {% endfor %}
-    {% else %}
-      <a href="#"><p>Explore</p></a>
-    {% endif %}
-  {% else %}
+{% for tweet in tweets %}
+  <div>
+    <hr>
     <div>
-      <h1>Hello, world!</h1>
-      <p>Welcome to Twitter.</p>
-      <p>
-        <a class="btn btn-primary btn-lg" href="{% url 'login' %}" role="button">Login in</a>
-      </p>
+      <span>@{{ tweet.author.username }}</span>
+      <small class="time">{{ tweet.created_date|naturaltime }}</small>
     </div>
-  {% endif %}
-{% endblock%}
+    <p>{{ tweet.content }}</p>
+    <div>
+      <a href="">
+        <span class="glyphicon glyphicon-share-alt reply-icon"></span>
+      </a>
+      <a href="">
+        <span class="glyphicon glyphicon-retweet reply-icon"></span>
+      </a>
+      <a href="">
+        <span class="glyphicon glyphicon-heart reply-icon"></span>
+      </a>
+      <a href="">
+        <span class="glyphicon glyphicon-trash reply-icon"></span>
+      </a>
+    </div>
+  </div>
+{% endfor %}
