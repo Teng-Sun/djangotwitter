@@ -2,47 +2,7 @@
 
 
 {% block main %}
-    {% if request.user.username != visited_user.username %}
-      <form method="POST" action="{% url 'follow' visited_user.username %}">
-        {% csrf_token %}
-          <button class="btn button-base-color button-right" type="submit">
-            <span class="glyphicon glyphicon-plus"></span>
-            Follow
-          </button>
-      </form>
-    {% endif %}
-    <div>
-      <ul class="nav nav-tabs nav-justified">
-        <li>
-          <a href="{% url 'profile' visited_user.username %}">
-            TWEETS
-            <br/>
-            <span class="badge center">{{ visited_user.tweet_set.all|length }}</span>
-          </a>
-        </li>
-        <li>
-          <a href="{% url 'following' visited_user.username %}">
-            FOLLOWING
-            <br/>
-            <span class="badge">{{ following|length }}</span>
-          </a>
-        </li>
-        <li>
-          <a href="#">
-            FOLLOWERS
-            <br/>
-            <span class="badge">{{ follower|length }}</span>
-          </a>
-        </li>
-        <li>
-          <a href="{% url 'profile' visited_user.username %}">
-            LIKES
-            <br/>
-            <span class="badge">{{ likes|length }}</span>
-          </a>
-        </li>
-      </ul>
-    </div>
+  {% include './profile_nav.html' %}
   <div>
     {% if tweets %}
       {% include "./tweet_list.html" %}
