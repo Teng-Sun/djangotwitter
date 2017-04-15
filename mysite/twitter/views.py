@@ -86,6 +86,16 @@ def follow(request, username):
         follow.save()
     return redirect('profile', username=username)
 
+def following(request, username):
+    visited_user = User.objects.get(username=username)
+    following_list = Followship.objects.filter(initiative_user=visited_user).all()
+    paginate_by = 10
+    followings = pagination(request, following_list, paginate_by)
+    return render(request, 'twitter/following.html', {
+        'followings': followings,
+        'object_list': followings,
+    })
+
 
 def pagination(request, objcet_list, paginate_by):
     paginator = Paginator(objcet_list, paginate_by)

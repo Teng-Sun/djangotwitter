@@ -8,4 +8,5 @@ urlpatterns = [
     url(r'^accounts/register/$', views.register, name='register'),
     url(r'^explore/$', views.explore, name='explore'),
     url(r'^follow/(?P<username>\w+)/$', views.follow, name="follow"),
+    url(r'^(?P<username>\w+)/following/$', views.following, name="following"),
 ]

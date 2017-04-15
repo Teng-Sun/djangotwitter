@@ -1,11 +1,18 @@
 {% extends "./base.html" %}
 
+{% load humanize %}
+
 {% block main %}
   {% if followings %}
     {% for following in followings %}
-      {{ following.username }}
+      <div>
+        <span>@{{ following.followed_user.username }}</span>
+        <small class="time">{{ following.date_follow|naturaltime }}</small>
+      </div>
+      <hr>
     {% empty %}
       <a href="{% url 'explore' %}">Explore</a>
     {% endfor %}
+    {% include './pagination.html' %}
   {% endif %}
 {% endblock %}

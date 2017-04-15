@@ -21,7 +21,7 @@
           </a>
         </li>
         <li>
-          <a href="{% url 'following' %}">
+          <a href="{% url 'following' visited_user.username %}">
             FOLLOWING
             <br/>
             <span class="badge">{{ following|length }}</span>
