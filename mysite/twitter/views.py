@@ -24,18 +24,17 @@ def add_tweet(request):
 
 def profile(request, username):
     login_user = request.user
-    visited_user = User.objects.get(username=username)
-    tweet_list = visited_user.tweet_set.all()
+    visited_user, tweet_list, following_list, \
+        follower_list = profile_subnav(request, username)
     paginate_by = 10
     tweets = pagination(request, tweet_list, paginate_by)
-    following = Followship.objects.filter(initiative_user=visited_user).all()
-    follower = Followship.objects.filter(followed_user=visited_user).all()
+
     return render(request, 'twitter/profile.html', {
         'visited_user': visited_user,
         'tweets': tweets,
         'object_list': tweets,
-        'following': following,
-        'follower': follower,
+        'following': following_list,
+        'follower': follower_list,
     })
 
 def register(request):
@@ -87,9 +86,8 @@ def follow(request, username):
     return redirect('profile', username=username)
 
 def following(request, username):
-    visited_user = User.objects.get(username=username)
-    follower = Followship.objects.filter(followed_user=visited_user).all()
-    following_list = Followship.objects.filter(initiative_user=visited_user).all()
+    visited_user, tweet_list, following_list, \
+        follower_list = profile_subnav(request, username)
     paginate_by = 10
     followings = pagination(request, following_list, paginate_by)
     return render(request, 'twitter/following.html', {
@@ -97,7 +95,7 @@ def following(request, username):
         'object_list': followings,
         'visited_user': visited_user,
         'following': following_list,
-        'follower': follower,
+        'follower': follower_list,
     })
     
 
@@ -112,3 +110,11 @@ def pagination(request, objcet_list, paginate_by):
     except EmptyPage:
         result = paginator.page(paginator.num_pages)
     return result
+
+
+def profile_subnav(request, username):
+    visited_user = User.objects.get(username=username)
+    tweet_list = visited_user.tweet_set.all()
+    following_list = Followship.objects.filter(initiative_user=visited_user).all()
+    follower_list = Followship.objects.filter(followed_user=visited_user).all()
+    return visited_user, tweet_list, following_list, follower_list
