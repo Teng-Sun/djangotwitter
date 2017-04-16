@@ -1,0 +1,21 @@
+{% extends "./base.html" %}
+
+{% load humanize %}
+
+{% block main %}
+  {% include './profile_nav.html' %}
+
+  {% if followers %}
+    {% for follower in followers %}
+      <hr>
+      <div>
+        <span>@{{ follower.initiative_user.username }}</span>
+        <small class="time">{{ follower.date_follow|naturaltime }}</small>
+      </div>
+      
+    {% empty %}
+      <a href="{% url 'explore' %}">Explore</a>
+    {% endfor %}
+    {% include './pagination.html' %}
+  {% endif %}
+{% endblock %}
