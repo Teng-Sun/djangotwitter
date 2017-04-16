@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth.models import User
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from django.core.exceptions import ObjectDoesNotExist
 
 from .models import Tweet, Followship
 from .forms import TweetForm, RegistrationForm, FollowForm
@@ -25,9 +26,11 @@ def add_tweet(request):
 def profile(request, username):
     login_user = request.user
     visited_user, tweet_list, following_list, \
-        follower_list = profile_subnav(request, username)
+        follower_list = profile_subnav(username)
     paginate_by = 10
     tweets = pagination(request, tweet_list, paginate_by)
+
+    has_followed, _ = validate_followship(login_user, visited_user)
 
     return render(request, 'twitter/profile.html', {
         'visited_user': visited_user,
@@ -35,6 +38,7 @@ def profile(request, username):
         'object_list': tweets,
         'following': following_list,
         'follower': follower_list,
+        'has_followed': has_followed
     })
 
 def register(request):
@@ -75,19 +79,23 @@ def explore(request):
 def follow(request, username):
     login_user = request.user
     visited_user = User.objects.get(username=username)
+
     if login_user != visited_user and request.method == 'POST':
-        form = FollowForm(request.POST)
-        form.save(commit=False)
-        follow = Followship(
-            followed_user = visited_user,
-            initiative_user = login_user,
-        )
-        follow.save()
+        login_follow_visited, _ = validate_followship(login_user, visited_user)
+
+        if not login_follow_visited:
+            form = FollowForm(request.POST)
+            form.save(commit=False)
+            follow = Followship(
+                followed_user = visited_user,
+                initiative_user = login_user,
+            )
+            follow.save()
     return redirect('profile', username=username)
 
 def following(request, username):
     visited_user, tweet_list, following_list, \
-        follower_list = profile_subnav(request, username)
+        follower_list = profile_subnav(username)
     paginate_by = 10
     followings = pagination(request, following_list, paginate_by)
     return render(request, 'twitter/following.html', {
@@ -112,9 +120,19 @@ def pagination(request, objcet_list, paginate_by):
     return result
 
 
-def profile_subnav(request, username):
+def profile_subnav(username):
     visited_user = User.objects.get(username=username)
     tweet_list = visited_user.tweet_set.all()
     following_list = Followship.objects.filter(initiative_user=visited_user).all()
     follower_list = Followship.objects.filter(followed_user=visited_user).all()
     return visited_user, tweet_list, following_list, follower_list
+
+def validate_followship(login_user, visited_user):
+    login_follow_visited = False
+    visited_follow_login = False
+
+    if Followship.objects.filter(followed_user=visited_user, initiative_user=login_user).all():
+        login_follow_visited = True
+    if Followship.objects.filter(followed_user=login_user, initiative_user=visited_user).all():
+        visited_follow_login = True
+    return login_follow_visited, visited_follow_login
