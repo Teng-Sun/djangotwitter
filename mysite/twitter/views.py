@@ -94,22 +94,39 @@ def explore(request):
     })
 
 
-# def follow(request, username):
-#     login_user = request.user
-#     visited_user = User.objects.get(username=username)
+def follow(request, username):
+    login_user = request.user
+    visited_user = User.objects.get(username=username)
 
-#     if login_user != visited_user and request.method == 'POST':
-#         login_follow_visited, _ = validate_followship(login_user, visited_user)
+    if login_user != visited_user and request.method == 'POST':
+        login_follow_visited, _ = validate_followship(login_user, visited_user)
 
-#         if not login_follow_visited:
-#             form = FollowForm(request.POST)
-#             form.save(commit=False)
-#             follow = Followship(
-#                 followed_user = visited_user,
-#                 initiative_user = login_user,
-#             )
-#             follow.save()
-#     return redirect('profile', username=username)
+        if not login_follow_visited:
+            form = FollowForm(request.POST)
+            form.save(commit=False)
+            follow = Followship(
+                followed_user = visited_user,
+                initiative_user = login_user,
+            )
+            follow.save()
+    return redirect('profile', username=username)
+
+def unfollow(request, username):
+    login_user = request.user
+    visited_user = User.objects.get(username=username)
+
+    login_follow_visited, _ \
+        = validate_followship(login_user, visited_user)
+
+    if login_user != visited_user and request.method == 'POST':
+        if login_follow_visited:
+            form = FollowForm(request.POST)
+            form.save(commit=False)
+            followship = Followship.objects.get(
+                followed_user=visited_user, initiative_user=login_user
+            )
+            followship.delete()
+    return redirect('profile', username=username)
 
 
 def profile_subnav(username):
