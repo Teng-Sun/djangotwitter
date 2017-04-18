@@ -18,3 +18,11 @@
     color: white;
     background-color: #c61d1d;
 }
+
+.modal-title {
+    display: inline-block;
+}
+
+.tweet-content {
+    font-weight: 400;
+}

@@ -10,7 +10,7 @@
     </div>
     <p>{{ tweet.content }}</p>
     <div>
-      <a href="">
+      <a data-toggle="modal" data-target="#replyModal">
         <span class="glyphicon glyphicon-share-alt reply-icon"></span>
       </a>
       <a href="">
@@ -24,4 +24,8 @@
       </a>
     </div>
   </div>
+
+  {% include './reply_modal.html' %}
+
+
 {% endfor %}
