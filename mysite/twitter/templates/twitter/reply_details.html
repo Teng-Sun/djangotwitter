@@ -1,0 +1,12 @@
+{% load humanize %}
+
+<ul>
+{% for reply in replies %}
+  <li>
+    <span>@{{reply.author.username}}</span>
+    <span>・</span>
+    <small class="time">{{reply.reply_date|naturaltime}}</small>
+    <p>{{reply.content}}</p>
+  </li>
+{% endfor %}
+</ul>

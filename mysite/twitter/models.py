@@ -4,6 +4,7 @@ from django.db import models
 from django.utils import timezone
 from django.contrib.auth.models import User
 
+
 class Tweet(models.Model):
     author = models.ForeignKey(User)
     content = models.TextField()
@@ -16,6 +17,24 @@ class Tweet(models.Model):
 
     class Meta:
         ordering = ['-created_date']
+
+class Reply(models.Model):
+    tweet = models.ForeignKey(Tweet, on_delete=models.CASCADE)
+    author = models.ForeignKey(
+        User,
+        related_name="reply_user",
+        on_delete=models.CASCADE,
+        default='',
+        null=True,
+    )
+    content = models.TextField()
+    reply_date = models.DateTimeField(default=timezone.now)
+
+    def __str__(self):
+        return self.content
+
+    class Meta:
+        ordering = ['-reply_date']
 
 class Followship(models.Model):
     followed_user = models.ForeignKey(

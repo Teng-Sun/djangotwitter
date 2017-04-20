@@ -26,3 +26,18 @@
 .tweet-content {
     font-weight: 400;
 }
+
+.reply-icon:hover { 
+    color: #428bca;
+}
+
+.reply-input {
+    display: none;
+}
+.row-reply-input {
+    margin-left: 0px;
+}
+
+input.message-text {
+    height: 37px;
+}

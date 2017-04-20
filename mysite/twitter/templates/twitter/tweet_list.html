@@ -1,31 +1,35 @@
-{% load humanize %}
-
 {% for tweet in tweets %}
-  <div>
-    <hr>
-    <div>
-      <span>@{{ tweet.author.username }}</span>
-      <span>・</span>
-      <small class="time">{{ tweet.created_date|naturaltime }}</small>
-    </div>
-    <p>{{ tweet.content }}</p>
-    <div>
-      <a data-toggle="modal" data-target="#replyModal">
-        <span class="glyphicon glyphicon-share-alt reply-icon"></span>
-      </a>
-      <a href="">
-        <span class="glyphicon glyphicon-retweet reply-icon"></span>
-      </a>
-      <a href="">
-        <span class="glyphicon glyphicon-heart reply-icon"></span>
-      </a>
-      <a href="">
-        <span class="glyphicon glyphicon-trash reply-icon"></span>
-      </a>
-    </div>
-  </div>
+  {% with tweet.reply_set.all as replies %}
+    {% with  forloop.counter as coun %}
+      <div>
+        <hr>
+        {% include './tweet_details.html' %}
 
-  {% include './reply_modal.html' %}
+        <div>
+          <span class="reply-icon" id="reply-icon-{{coun}}" data-counter={{forloop.counter}}>
+            <span class="glyphicon glyphicon-share-alt"></span>
+            <small>{{ replies|length}}</small>
+          </span>
 
+          <a href="">
+            <span class="glyphicon glyphicon-retweet reply-icon"></span>
+          </a>
+          <a href="">
+            <span class="glyphicon glyphicon-heart reply-icon"></span>
+          </a>
+          <a href="">
+            <span class="glyphicon glyphicon-trash reply-icon"></span>
+          </a>
+        </div>
+      </div>
+
+      <div class="reply-input" id="reply-input-{{coun}}">
+        {% include './reply_form.html' %}
+        {% include './reply_details.html' %}
+      </div>
+    {% endwith %}
+  {% endwith %}
 
 {% endfor %}
+
+

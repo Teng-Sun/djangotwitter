@@ -2,9 +2,10 @@ from django.shortcuts import render, redirect
 from django.contrib.auth.models import User
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.core.exceptions import ObjectDoesNotExist
+from django.contrib.auth.decorators import login_required
 
-from .models import Tweet, Followship
-from .forms import TweetForm, RegistrationForm, FollowForm
+from .models import Tweet, Followship, Reply
+from .forms import TweetForm, RegistrationForm, FollowForm, ReplyForm
 
 def index(request):
     return render(request, 'twitter/index.html')
@@ -28,6 +29,7 @@ def register(request):
         'form': form,
     })
 
+@login_required
 def add_tweet(request):
     if request.method == 'POST':
         form = TweetForm(request.POST)
@@ -94,6 +96,7 @@ def explore(request):
     })
 
 
+@login_required
 def follow(request, username):
     login_user = request.user
     visited_user = User.objects.get(username=username)
@@ -111,6 +114,7 @@ def follow(request, username):
             follow.save()
     return redirect('profile', username=username)
 
+@login_required
 def unfollow(request, username):
     login_user = request.user
     visited_user = User.objects.get(username=username)
@@ -127,6 +131,24 @@ def unfollow(request, username):
             )
             followship.delete()
     return redirect('profile', username=username)
+
+@login_required
+def reply(request, tweet_id):
+    tweet = Tweet.objects.get(pk=tweet_id)
+    redirect_path = request.POST.get('next', '/')
+    print redirect_path
+    if request.method == 'POST':
+        form = ReplyForm(request.POST)
+        print form.__dict__
+        if form.is_valid():
+            reply = form.save(commit=False)
+            reply.tweet = tweet
+            reply.author = request.user
+            reply.save()
+    else:
+        form = ReplyForm()
+    return redirect(redirect_path)
+    
 
 
 def profile_subnav(username):

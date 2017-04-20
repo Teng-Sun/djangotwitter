@@ -1,0 +1,9 @@
+<form action="{% url 'reply' tweet.id %}" method="POST" class="post-form">
+  {% csrf_token %}
+  <div class="row row-reply-input">
+    <input type="text" id="message-text-{{coun}}" class="col-md-10 message-text" placeholder="Tweet your reply" name="content" data-coun={{coun}}></input>
+    <div class="col-md-2">
+      <button type="submit" id="reply-submit-button-{{coun}}" class="btn btn-info" disabled="disabled" name="next" value="{{ request.path }}">comment</button>
+    </div>
+  </div>
+</form>

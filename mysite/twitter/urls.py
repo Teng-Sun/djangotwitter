@@ -11,4 +11,5 @@ urlpatterns = [
     url(r'^following/(?P<username>\w+)/$', views.following, name="following"),
     url(r'^follow/(?P<username>\w+)/$', views.follow, name="follow"),
     url(r'^unfollow/(?P<username>\w+)/$', views.unfollow, name="unfollow"),
+    url(r'^reply/(?P<tweet_id>\w+)/$', views.reply, name="reply"),
 ]
