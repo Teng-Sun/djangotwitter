@@ -136,19 +136,25 @@ def unfollow(request, username):
 def reply(request, tweet_id):
     tweet = Tweet.objects.get(pk=tweet_id)
     redirect_path = request.POST.get('next', '/')
-    print redirect_path
     if request.method == 'POST':
-        form = ReplyForm(request.POST)
-        print form.__dict__
-        if form.is_valid():
-            reply = form.save(commit=False)
+        reply_form = ReplyForm(request.POST)
+        new_tweet_form = TweetForm(request.POST)
+
+        if reply_form.is_valid() and new_tweet_form.is_valid():
+            reply = reply_form.save(commit=False)
             reply.tweet = tweet
             reply.author = request.user
             reply.save()
+
+            new_tweet = new_tweet_form.save(commit=False)
+            new_tweet.author = request.user
+            new_tweet.content = reply.content
+            new_tweet.created_date = reply.reply_date
+            new_tweet.save()
+            
     else:
-        form = ReplyForm()
+        reply_form = ReplyForm()
     return redirect(redirect_path)
-    
 
 
 def profile_subnav(username):
