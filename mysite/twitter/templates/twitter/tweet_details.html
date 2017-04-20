@@ -1,8 +1,9 @@
 {% load humanize %}
+{% load twitter_extras %}
 
 <div>
   <span>@{{ tweet.author.username }}</span>
   <span>・</span>
-  <small class="time">{{ tweet.created_date|naturaltime }}</small>
+  <small class="time">{{ tweet.created_date|display_time }}</small>
 </div>
 <p>{{ tweet.content }}</p>
