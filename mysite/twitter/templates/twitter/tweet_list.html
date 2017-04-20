@@ -8,7 +8,9 @@
         <div>
           <span class="reply-icon" id="reply-icon-{{coun}}" data-counter={{forloop.counter}}>
             <span class="glyphicon glyphicon-share-alt"></span>
-            <small>{{ replies|length}}</small>
+            {% if replies|length %}
+              <small>{{ replies|length}}</small>
+            {% endif %}
           </span>
 
           <a href="">
