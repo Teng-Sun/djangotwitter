@@ -10,6 +10,7 @@
 }
 .reply-icon {
     padding-right: 40px;
+    display: inline;
 }
 .no-tweet {
     margin: 40px;
@@ -27,10 +28,13 @@
     font-weight: 400;
 }
 
-.reply-icon:hover { 
+a.reply-icon {
+    text-decoration: none;
+    color: #333;
+}
+a.reply-icon:hover {
     color: #428bca;
 }
-
 .reply-input {
     display: none;
 }
@@ -40,4 +44,8 @@
 
 input.message-text {
     height: 37px;
+}
+
+.retweeted-icon {
+    color: #17bf63;
 }

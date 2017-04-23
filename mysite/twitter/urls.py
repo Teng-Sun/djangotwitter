@@ -3,7 +3,7 @@ from . import views
 
 urlpatterns = [
     url(r'^$', views.index, name='index'),
-    url(r'^tweet/$', views.add_tweet, name='add_tweet'),
+    url(r'^tweet/$', views.post_tweet, name='post_tweet'),
     url(r'^profile/(?P<username>\w+)/$', views.profile, name='profile'),
     url(r'^accounts/register/$', views.register, name='register'),
     url(r'^explore/$', views.explore, name='explore'),
@@ -12,4 +12,5 @@ urlpatterns = [
     url(r'^follow/(?P<username>\w+)/$', views.follow, name="follow"),
     url(r'^unfollow/(?P<username>\w+)/$', views.unfollow, name="unfollow"),
     url(r'^reply/(?P<tweet_id>\w+)/$', views.reply, name="reply"),
+    url(r'^retweet/(?P<tweet_id>\w+)$', views.retweet, name="retweet"),
 ]

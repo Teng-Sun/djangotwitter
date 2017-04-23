@@ -11,6 +11,7 @@ class Tweet(models.Model):
     created_date = models.DateTimeField(
         default = timezone.now
     )
+    is_retweet = models.BooleanField(default=False)
 
     def __str__(self):
         return self.content
@@ -35,6 +36,15 @@ class Reply(models.Model):
 
     class Meta:
         ordering = ['-reply_date']
+
+class Retweet(models.Model):
+    tweet = models.ForeignKey(Tweet, on_delete=models.CASCADE)
+    author = models.ForeignKey(User, )
+    retweet_date =  models.DateTimeField(default=timezone.now)
+
+    class Meta:
+        ordering = ['-retweet_date']
+
 
 class Followship(models.Model):
     followed_user = models.ForeignKey(

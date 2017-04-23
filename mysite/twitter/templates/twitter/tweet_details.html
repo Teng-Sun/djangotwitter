@@ -1,5 +1,14 @@
-{% load humanize %}
 {% load twitter_extras %}
+
+  {% if tweet.is_retweet %}
+    <div>
+      <span class="glyphicon glyphicon-retweet retweeted-icon"></span>
+      <small>
+        {{ visited_user.username }} Retweeted
+      </small>
+    </div>
+  {% endif %}
+
 
 <div>
   <span>@{{ tweet.author.username }}</span>

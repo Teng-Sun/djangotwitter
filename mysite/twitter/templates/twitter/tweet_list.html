@@ -1,27 +1,40 @@
 {% for tweet in tweets %}
   {% with tweet.reply_set.all as replies %}
+  {% with tweet.retweet_set.all as retweet %}
     {% with  forloop.counter as coun %}
       <div>
         <hr>
         {% include './tweet_details.html' %}
 
-        <div>
-          <span class="reply-icon" id="reply-icon-{{coun}}" data-counter={{forloop.counter}}>
-            <span class="glyphicon glyphicon-share-alt"></span>
-            {% if replies|length %}
-              <small>{{ replies|length}}</small>
-            {% endif %}
-          </span>
+        <div class="row">
+          <div class="col-sm-1">
+            <a class="reply-icon" id="reply-icon-{{coun}}" data-counter={{coun}}>
+              <span class="glyphicon glyphicon-share-alt"></span>
+              {% if replies|length %}
+                <small>{{ replies|length}}</small>
+              {% endif %}
+            </a>
+          </div>
 
-          <a href="">
-            <span class="glyphicon glyphicon-retweet reply-icon"></span>
-          </a>
-          <a href="">
-            <span class="glyphicon glyphicon-heart reply-icon"></span>
-          </a>
-          <a href="">
-            <span class="glyphicon glyphicon-trash reply-icon"></span>
-          </a>
+          <div class="col-sm-1">
+            <a class="reply-icon" href="{% url 'retweet' tweet.id %}">
+              <span class="glyphicon glyphicon-retweet"></span>
+              {% if retweet|length %}
+                <small>{{ retweet|length}}</small>
+              {% endif %}
+            </a>
+          </div>
+            
+          <div class="col-sm-1">
+            <a href="">
+              <span class="glyphicon glyphicon-heart reply-icon"></span>
+            </a>
+          </div>
+          <div class="col-sm-1">
+            <a href="">
+              <span class="glyphicon glyphicon-trash reply-icon"></span>
+            </a>
+          </div>
         </div>
       </div>
 
@@ -29,7 +42,10 @@
         {% include './reply_form.html' %}
         {% include './reply_details.html' %}
       </div>
+
+      
     {% endwith %}
+  {% endwith %}
   {% endwith %}
 
 {% endfor %}

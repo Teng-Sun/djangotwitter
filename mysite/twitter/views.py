@@ -4,7 +4,7 @@ from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.core.exceptions import ObjectDoesNotExist
 from django.contrib.auth.decorators import login_required
 
-from .models import Tweet, Followship, Reply
+from .models import Tweet, Followship, Reply, Retweet
 from .forms import TweetForm, RegistrationForm, FollowForm, ReplyForm
 
 def index(request):
@@ -30,7 +30,7 @@ def register(request):
     })
 
 @login_required
-def add_tweet(request):
+def post_tweet(request):
     if request.method == 'POST':
         form = TweetForm(request.POST)
         if form.is_valid():
@@ -40,7 +40,7 @@ def add_tweet(request):
             return redirect('profile', username=request.user.username)
     else:
         form = TweetForm()
-    return render(request, 'twitter/add_tweet.html', {
+    return render(request, 'twitter/post_tweet.html', {
         'form': form,
     })
 
@@ -146,15 +146,43 @@ def reply(request, tweet_id):
             reply.author = request.user
             reply.save()
 
-            new_tweet = new_tweet_form.save(commit=False)
-            new_tweet.author = request.user
-            new_tweet.content = reply.content
-            new_tweet.created_date = reply.reply_date
-            new_tweet.save()
+            create_tweet(request, new_tweet_form, reply.content, reply.reply_date)
             
     else:
         reply_form = ReplyForm()
     return redirect(redirect_path)
+
+@login_required
+def retweet(request, tweet_id):
+    tweet = Tweet.objects.get(pk=tweet_id)
+    user = request.user
+
+    if not Retweet.objects.filter(tweet=tweet, author=request.user) :
+        re_tweet = Retweet(
+            author = request.user,
+            tweet = tweet,
+        )
+        re_tweet.save()
+
+        new_tweet = Tweet(
+            author = request.user, 
+            content = tweet.content,
+            created_date = re_tweet.retweet_date,
+            is_retweet = True,
+        )
+        new_tweet.save()
+    
+    return redirect(request.META.get('HTTP_REFERER'))
+
+
+
+def create_tweet(request, new_tweet_form, tweet_content, tweet_time):
+    new_tweet =  new_tweet_form.save(commit=False)
+    new_tweet.author = request.user
+    new_tweet.content = tweet_content
+    new_tweet.created_date = tweet_time
+    new_tweet.save()
+
 
 
 def profile_subnav(username):
