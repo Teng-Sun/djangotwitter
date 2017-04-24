@@ -1,6 +1,5 @@
 {% for tweet in tweets %}
   {% with tweet.reply_set.all as replies %}
-  {% with tweet.retweet_set.all as retweet %}
     {% with  forloop.counter as coun %}
       <div>
         <hr>
@@ -17,12 +16,17 @@
           </div>
 
           <div class="col-sm-1">
-            <a class="reply-icon" href="{% url 'retweet' tweet.id %}">
-              <span class="glyphicon glyphicon-retweet"></span>
-              {% if retweet|length %}
-                <small>{{ retweet|length}}</small>
-              {% endif %}
-            </a>
+            {% if tweet.original_tweet %}
+              <a class="reply-icon" href="{% url 'retweet' tweet.original_tweet.id %}">
+                <span class="glyphicon glyphicon-retweet"></span>
+                <small>{{tweet.original_tweet.retweet_num}}</small>
+              </a>
+            {% else %}
+              <a class="reply-icon" href="{% url 'retweet' tweet.id %}">
+                <span class="glyphicon glyphicon-retweet"></span>
+              </a>
+            {% endif %}
+            
           </div>
             
           <div class="col-sm-1">
@@ -45,7 +49,6 @@
 
       
     {% endwith %}
-  {% endwith %}
   {% endwith %}
 
 {% endfor %}

@@ -12,6 +12,7 @@ class Tweet(models.Model):
         default = timezone.now
     )
     is_retweet = models.BooleanField(default=False)
+    retweet_num = models.IntegerField(default=0)
 
     def __str__(self):
         return self.content
@@ -44,6 +45,22 @@ class Retweet(models.Model):
 
     class Meta:
         ordering = ['-retweet_date']
+
+class Retweetship(models.Model):
+    original_tweet = models.ForeignKey(
+        Tweet,
+        related_name='original',
+        on_delete=models.CASCADE
+    )
+    re_tweet = models.ForeignKey(
+        Tweet,
+        related_name='re',
+        on_delete=models.CASCADE,
+    )
+    re_date = models.DateTimeField(default=timezone.now)
+
+    class Meta:
+        ordering = ['-re_date']
 
 
 class Followship(models.Model):

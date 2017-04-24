@@ -11,7 +11,11 @@
 
 
 <div>
-  <span>@{{ tweet.author.username }}</span>
+  {% if tweet.original_tweet %}
+    <span>@{{ tweet.original_tweet.author.username }}</span>
+  {% else %}
+    <span>@{{ tweet.author.username }}</span>
+  {% endif %}
   <span>・</span>
   <small class="time">{{ tweet.created_date|display_time }}</small>
 </div>

@@ -4,7 +4,7 @@ from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.core.exceptions import ObjectDoesNotExist
 from django.contrib.auth.decorators import login_required
 
-from .models import Tweet, Followship, Reply, Retweet
+from .models import Tweet, Followship, Reply, Retweet, Retweetship
 from .forms import TweetForm, RegistrationForm, FollowForm, ReplyForm
 
 def index(request):
@@ -49,8 +49,8 @@ def profile(request, username):
         follower_list = set_profile_subnav_session(request, username)
 
     paginate_by = 10
-    tweets = pagination(request, tweet_list, paginate_by)
 
+    tweets = pagination(request, tweet_list, paginate_by)
     return render(request, 'twitter/profile.html', {
         'visited_user': visited_user,
         'tweets': tweets,
@@ -154,27 +154,45 @@ def reply(request, tweet_id):
 
 @login_required
 def retweet(request, tweet_id):
-    tweet = Tweet.objects.get(pk=tweet_id)
+    current_tweet = Tweet.objects.get(pk=tweet_id)
     user = request.user
 
-    if not Retweet.objects.filter(tweet=tweet, author=request.user) :
-        re_tweet = Retweet(
-            author = request.user,
-            tweet = tweet,
+    if not Retweet.objects.filter(tweet=current_tweet, author=user):
+        retweet = Retweet(
+            author = user,
+            tweet = current_tweet,
         )
-        re_tweet.save()
+        retweet.save()
 
         new_tweet = Tweet(
-            author = request.user, 
-            content = tweet.content,
-            created_date = re_tweet.retweet_date,
+            author = user, 
+            content = current_tweet.content,
             is_retweet = True,
         )
         new_tweet.save()
-    
+
+        current_tweet.retweet_num += 1
+        current_tweet.save()
+
+        retweetship = Retweetship(
+            original_tweet = current_tweet,
+            re_tweet = new_tweet,
+        )
+        retweetship.save()
     return redirect(request.META.get('HTTP_REFERER'))
 
+# @login_required
+# def unretweet(request, tweet_id):
+#     tweet = Tweet.objects.get(pk=tweet_id)
+#     user = request.user
+#     retweet = Retweet.objects.filter(tweet=tweet, author=user)
+#     print bool(retweet)
 
+#     if retweet:
+#         retweet.delete()
+#         tweet.delete()
+
+#     return redirect(request.META.get('HTTP_REFERER'))
 
 def create_tweet(request, new_tweet_form, tweet_content, tweet_time):
     new_tweet =  new_tweet_form.save(commit=False)
@@ -187,7 +205,15 @@ def create_tweet(request, new_tweet_form, tweet_content, tweet_time):
 
 def profile_subnav(username):
     visited_user = User.objects.get(username=username)
-    tweet_list = visited_user.tweet_set.all()
+    tweet_list = list(visited_user.tweet_set.all())
+    
+    for tweet in tweet_list:
+        if tweet.is_retweet:
+            original_tweet = Retweetship.objects.get(re_tweet=tweet).original_tweet
+            tweet.original_tweet = original_tweet
+            if original_tweet in tweet_list:
+                tweet_list.remove(original_tweet)
+
     following_list = Followship.objects.filter(initiative_user=visited_user).all()
     follower_list = Followship.objects.filter(followed_user=visited_user).all()
     return visited_user, tweet_list, following_list, follower_list
