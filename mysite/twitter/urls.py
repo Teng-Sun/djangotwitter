@@ -14,4 +14,5 @@ urlpatterns = [
     url(r'^reply/(?P<tweet_id>\w+)/$', views.reply, name="reply"),
     url(r'^retweet/(?P<tweet_id>\w+)$', views.retweet, name="retweet"),
     url(r'^unretweet/(?P<tweet_id>\w+)/(?P<original_tweet_id>\w+)$', views.unretweet, name="unretweet"),
+    url(r'^like/(?P<tweet_id>\w+)$', views.like, name='like'),
 ]

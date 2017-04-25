@@ -33,18 +33,17 @@
                   <span class="glyphicon glyphicon-retweet"></span>
                 </a>
             {% endif %}
-
-            
           </div>
             
           <div class="col-sm-1">
-            <a href="">
-              <span class="glyphicon glyphicon-heart reply-icon"></span>
+            <a class="reply-icon" href="{% url 'like' tweet.id %}">
+              <span class="glyphicon glyphicon-heart"></span>
+              <small>{{tweet.like_set.all|length}}</small>
             </a>
           </div>
           <div class="col-sm-1">
             <a href="">
-              <span class="glyphicon glyphicon-trash reply-icon"></span>
+              <span class="glyphicon glyphicon-trash"></span>
             </a>
           </div>
         </div>

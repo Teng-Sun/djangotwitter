@@ -4,7 +4,7 @@ from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.core.exceptions import ObjectDoesNotExist
 from django.contrib.auth.decorators import login_required
 
-from .models import Tweet, Followship, Reply, Retweet, Retweetship
+from .models import Tweet, Followship, Reply, Retweet, Retweetship, Like
 from .forms import TweetForm, RegistrationForm, FollowForm, ReplyForm
 
 def index(request):
@@ -192,6 +192,20 @@ def unretweet(request, tweet_id, original_tweet_id):
         original_tweet.retweet_num -= 1
         original_tweet.save()
     return redirect(request.META.get('HTTP_REFERER'))
+
+
+@login_required
+def like(request, tweet_id):
+    tweet = Tweet.objects.get(pk=tweet_id)
+    user = request.user
+    if not Like.objects.filter(tweet=tweet, author=user):
+        like_tweet = Like(
+            author = user,
+            tweet = tweet,
+        )
+        like_tweet.save()
+    return redirect(request.META.get('HTTP_REFERER'))
+
 
 def create_tweet(request, new_tweet_form, tweet_content, tweet_time):
     new_tweet =  new_tweet_form.save(commit=False)

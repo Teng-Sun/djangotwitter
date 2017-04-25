@@ -46,6 +46,14 @@ class Retweet(models.Model):
     class Meta:
         ordering = ['-retweet_date']
 
+class Like(models.Model):
+    tweet = models.ForeignKey(Tweet, on_delete=models.CASCADE)
+    author = models.ForeignKey(User)
+    like_date = models.DateTimeField(default=timezone.now)
+
+    class Meta:
+        ordering = ['-like_date']
+
 class Retweetship(models.Model):
     original_tweet = models.ForeignKey(
         Tweet,
