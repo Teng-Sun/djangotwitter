@@ -13,5 +13,5 @@ urlpatterns = [
     url(r'^unfollow/(?P<username>\w+)/$', views.unfollow, name="unfollow"),
     url(r'^reply/(?P<tweet_id>\w+)/$', views.reply, name="reply"),
     url(r'^retweet/(?P<tweet_id>\w+)$', views.retweet, name="retweet"),
-    # url(r'^unretweet/(?P<tweet_id>\w+)$', views.unretweet, name="unretweet"),
+    url(r'^unretweet/(?P<tweet_id>\w+)/(?P<original_tweet_id>\w+)$', views.unretweet, name="unretweet"),
 ]

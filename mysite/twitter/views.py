@@ -181,18 +181,17 @@ def retweet(request, tweet_id):
         retweetship.save()
     return redirect(request.META.get('HTTP_REFERER'))
 
-# @login_required
-# def unretweet(request, tweet_id):
-#     tweet = Tweet.objects.get(pk=tweet_id)
-#     user = request.user
-#     retweet = Retweet.objects.filter(tweet=tweet, author=user)
-#     print bool(retweet)
-
-#     if retweet:
-#         retweet.delete()
-#         tweet.delete()
-
-#     return redirect(request.META.get('HTTP_REFERER'))
+@login_required
+def unretweet(request, tweet_id, original_tweet_id):
+    tweet = Tweet.objects.get(pk=tweet_id)
+    original_tweet = Tweet.objects.get(pk=original_tweet_id)
+    retweet = Retweet.objects.filter(tweet=original_tweet, author=request.user)
+    if retweet:
+        tweet.delete()
+        retweet.delete()
+        original_tweet.retweet_num -= 1
+        original_tweet.save()
+    return redirect(request.META.get('HTTP_REFERER'))
 
 def create_tweet(request, new_tweet_form, tweet_content, tweet_time):
     new_tweet =  new_tweet_form.save(commit=False)
@@ -203,14 +202,18 @@ def create_tweet(request, new_tweet_form, tweet_content, tweet_time):
 
 
 
-def profile_subnav(username):
+def profile_subnav(request, username):
     visited_user = User.objects.get(username=username)
+    login_user = request.user
     tweet_list = list(visited_user.tweet_set.all())
-    
+
     for tweet in tweet_list:
-        if tweet.is_retweet:
-            original_tweet = Retweetship.objects.get(re_tweet=tweet).original_tweet
+        retweetship = Retweetship.objects.filter(re_tweet=tweet)
+        if tweet.is_retweet and retweetship:
+            original_tweet = retweetship[0].original_tweet
             tweet.original_tweet = original_tweet
+            if Retweet.objects.filter(tweet=original_tweet, author=login_user):
+                tweet.already_been_retweeted = True
             if original_tweet in tweet_list:
                 tweet_list.remove(original_tweet)
 
@@ -232,7 +235,7 @@ def set_profile_subnav_session(request, username):
     login_user = request.user
 
     visited_user, tweet_list, following_list, \
-        follower_list = profile_subnav(username)
+        follower_list = profile_subnav(request, username)
 
     login_follow_visited, visited_follow_login, \
         = validate_followship(login_user, visited_user)
