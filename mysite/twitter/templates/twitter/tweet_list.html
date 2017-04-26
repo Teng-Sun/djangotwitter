@@ -1,17 +1,15 @@
 {% for tweet in tweets %}
-  {% with tweet.reply_set.all as replies %}
-    {% with  forloop.counter as coun %}
+  {% with  forloop.counter as coun %}
       <div>
         <hr>
         {% include './tweet_details.html' %}
-
 
         <div class="row">
           <div class="col-sm-1">
             <a class="reply-icon" id="reply-icon-{{coun}}" data-counter={{coun}}>
               <span class="glyphicon glyphicon-share-alt"></span>
-              {% if replies|length %}
-                <small>{{ replies|length}}</small>
+              {% if tweet.replies %}
+                <small>{{ tweet.replies|length }}</small>
               {% endif %}
             </a>
           </div>
@@ -51,9 +49,6 @@
         {% include './reply_details.html' %}
       </div>
       
-    {% endwith %}
   {% endwith %}
 
 {% endfor %}
-
-

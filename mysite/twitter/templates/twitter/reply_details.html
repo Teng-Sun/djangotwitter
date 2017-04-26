@@ -1,7 +1,7 @@
 {% load humanize %}
 
 <ul>
-{% for reply in replies %}
+{% for reply in tweet.replies %}
   <li>
     <span>@{{reply.author.username}}</span>
     <span>・</span>

@@ -23,11 +23,7 @@ def retweet(request, tweet_id):
         original_tweet.retweet_num += 1
         original_tweet.save()
 
-        new_tweet = Tweet(
-            author = user,
-            content = original_tweet.content,
-            original_tweet = original_tweet,
-        )
+        new_tweet = create_tweet(user, original_tweet.content, original_tweet, date=None)
         new_tweet.save()
    
     return redirect(request.META.get('HTTP_REFERER'))
@@ -45,6 +41,26 @@ def unretweet(request, tweet_id):
         tweet.delete()
 
     return redirect(request.META.get('HTTP_REFERER'))
+
+@login_required
+def reply(request, tweet_id):
+    tweet = Tweet.objects.get(pk=tweet_id)
+    user = request.user
+    original_tweet = get_original_tweet(tweet)
+    if request.method == 'POST':
+        reply_form = ReplyForm(request.POST)
+        if reply_form.is_valid():
+            reply = reply_form.save(commit=False)
+            reply.tweet = original_tweet
+            reply.author = user
+            reply.save()
+
+            new_tweet = create_tweet(user, reply.content, original_tweet=None, date=None)
+            new_tweet.save()
+    else:
+        reply_form = ReplyForm()
+    return redirect(request.META.get('HTTP_REFERER'))
+
 
 
 def index(request):
@@ -160,25 +176,7 @@ def unfollow(request, username):
             followship.delete()
     return redirect('profile', username=username)
 
-@login_required
-def reply(request, tweet_id):
-    tweet = Tweet.objects.get(pk=tweet_id)
-    redirect_path = request.POST.get('next', '/')
-    if request.method == 'POST':
-        reply_form = ReplyForm(request.POST)
-        new_tweet_form = TweetForm(request.POST)
 
-        if reply_form.is_valid() and new_tweet_form.is_valid():
-            reply = reply_form.save(commit=False)
-            reply.tweet = tweet
-            reply.author = request.user
-            reply.save()
-
-            create_tweet(request, new_tweet_form, reply.content, reply.reply_date)
-            
-    else:
-        reply_form = ReplyForm()
-    return redirect(redirect_path)
 
 
 
@@ -196,13 +194,16 @@ def like(request, tweet_id):
     return redirect(request.META.get('HTTP_REFERER'))
 
 
-def create_tweet(request, new_tweet_form, tweet_content, tweet_time):
-    new_tweet =  new_tweet_form.save(commit=False)
-    new_tweet.author = request.user
-    new_tweet.content = tweet_content
-    new_tweet.created_date = tweet_time
-    new_tweet.save()
-
+def create_tweet(author, content, original_tweet, date):
+    new_tweet = Tweet(
+        author = author,
+        content = content,
+    )
+    if original_tweet:
+        new_tweet.original_tweet = original_tweet
+    if date:
+        new_tweet.created_date = date
+    return new_tweet
 
 
 def profile_subnav(request, username):
@@ -211,12 +212,14 @@ def profile_subnav(request, username):
     tweet_list = list(visited_user.tweet_set.all())
 
     for tweet in tweet_list:
-        if has_been_retweeded_by_user(tweet, login_user):
+        original_tweet = get_original_tweet(tweet)
+        if Tweet.objects.filter(author=login_user, original_tweet=original_tweet):
             tweet.has_been_retweeded = True
         if Tweet.objects.filter(author=visited_user, original_tweet=tweet):
             tweet_list.remove(tweet)
         if tweet.original_tweet:
             tweet.retweet_num = tweet.original_tweet.retweet_num
+        tweet.replies = Reply.objects.filter(tweet=original_tweet)
 
     following_list = Followship.objects.filter(initiative_user=visited_user).all()
     follower_list = Followship.objects.filter(followed_user=visited_user).all()
@@ -255,11 +258,6 @@ def get_original_tweet(tweet):
     if tweet.original_tweet:
         original_tweet = Tweet.objects.get(pk=tweet.original_tweet.id)
     return original_tweet
-
-def has_been_retweeded_by_user(tweet, user):
-    original_tweet = get_original_tweet(tweet)
-    return Tweet.objects.filter(author=user, original_tweet=original_tweet)
-
 
 def pagination(request, objcet_list, paginate_by):
     paginator = Paginator(objcet_list, paginate_by)
