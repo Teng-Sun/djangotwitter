@@ -1,54 +1,12 @@
 {% for tweet in tweets %}
   {% with  forloop.counter as coun %}
-      <div>
-        <hr>
-        {% include './tweet_details.html' %}
+      <hr>
+      
+      {% include './tweet_details.html' %}
 
-        <div class="row">
-          <div class="col-sm-1">
-            <a class="reply-icon" id="reply-icon-{{coun}}" data-counter={{coun}}>
-              <span class="glyphicon glyphicon-share-alt"></span>
-              {% if tweet.replies %}
-                <small>{{ tweet.replies|length }}</small>
-              {% endif %}
-            </a>
-          </div>
+      {% include './tweet_icon.html' %}
 
-          <div class="col-sm-1">
-            {% if tweet.has_been_retweeded %}
-              <a class="reply-icon" href="{% url 'unretweet' tweet.id %}">
-                <span class="glyphicon glyphicon-retweet"></span>
-                <small>{{tweet.retweet_num}}</small>
-              </a>
-            {% else %}
-              <a class="reply-icon" href="{% url 'retweet' tweet.id %}">
-                <span class="glyphicon glyphicon-retweet"></span>
-                {% if tweet.retweet_num %}
-                  <small>{{tweet.retweet_num}}</small>
-                {% endif %}
-              </a>
-            {% endif %}
-          </div>
-            
-          <div class="col-sm-1">
-            <a class="reply-icon" href="{% url 'like' tweet.id %}">
-              <span class="glyphicon glyphicon-heart"></span>
-              <small>{{tweet.like_set.all|length}}</small>
-            </a>
-          </div>
-          <div class="col-sm-1">
-            <a href="">
-              <span class="glyphicon glyphicon-trash"></span>
-            </a>
-          </div>
-        </div>
-      </div>
-
-      <div class="reply-input" id="reply-input-{{coun}}">
-        {% include './reply_form.html' %}
-        {% include './reply_details.html' %}
-      </div>
+      {% include './reply.html' %}
       
   {% endwith %}
-
 {% endfor %}
