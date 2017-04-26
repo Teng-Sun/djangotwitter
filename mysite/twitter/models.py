@@ -11,7 +11,12 @@ class Tweet(models.Model):
     created_date = models.DateTimeField(
         default = timezone.now
     )
-    is_retweet = models.BooleanField(default=False)
+    original_tweet = models.ForeignKey(
+        'self',
+        on_delete=models.CASCADE,
+        null=True,
+        blank = True,
+    )
     retweet_num = models.IntegerField(default=0)
 
     def __str__(self):
@@ -38,14 +43,6 @@ class Reply(models.Model):
     class Meta:
         ordering = ['-reply_date']
 
-class Retweet(models.Model):
-    tweet = models.ForeignKey(Tweet, on_delete=models.CASCADE)
-    author = models.ForeignKey(User, )
-    retweet_date =  models.DateTimeField(default=timezone.now)
-
-    class Meta:
-        ordering = ['-retweet_date']
-
 class Like(models.Model):
     tweet = models.ForeignKey(Tweet, on_delete=models.CASCADE)
     author = models.ForeignKey(User)
@@ -53,23 +50,6 @@ class Like(models.Model):
 
     class Meta:
         ordering = ['-like_date']
-
-class Retweetship(models.Model):
-    original_tweet = models.ForeignKey(
-        Tweet,
-        related_name='original',
-        on_delete=models.CASCADE
-    )
-    re_tweet = models.ForeignKey(
-        Tweet,
-        related_name='re',
-        on_delete=models.CASCADE,
-    )
-    re_date = models.DateTimeField(default=timezone.now)
-
-    class Meta:
-        ordering = ['-re_date']
-
 
 class Followship(models.Model):
     followed_user = models.ForeignKey(
@@ -83,4 +63,3 @@ class Followship(models.Model):
         on_delete=models.CASCADE,
     )
     date_follow = models.DateTimeField(default=timezone.now)
-

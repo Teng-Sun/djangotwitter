@@ -1,6 +1,6 @@
 {% load twitter_extras %}
 
-  {% if tweet.is_retweet %}
+  {% if tweet.original_tweet %}
     <div>
       <span class="glyphicon glyphicon-retweet retweeted-icon"></span>
       <small>
@@ -17,6 +17,6 @@
     <span>@{{ tweet.author.username }}</span>
   {% endif %}
   <span>・</span>
-  <small class="time">{{ tweet.created_date|display_time }}</small>
+  <small class="time">{{ tweet.created_date|display_time }} ago</small>
 </div>
 <p>{{ tweet.content }}</p>

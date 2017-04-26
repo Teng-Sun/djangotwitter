@@ -5,6 +5,7 @@
         <hr>
         {% include './tweet_details.html' %}
 
+
         <div class="row">
           <div class="col-sm-1">
             <a class="reply-icon" id="reply-icon-{{coun}}" data-counter={{coun}}>
@@ -16,22 +17,18 @@
           </div>
 
           <div class="col-sm-1">
-            {% if tweet.is_retweet %}
-                {% if tweet.already_been_retweeted %}
-                  <a class="reply-icon" href="{% url 'unretweet' tweet.id  tweet.original_tweet.id %}">
-                    <span class="glyphicon glyphicon-retweet"></span>
-                    <small>{{tweet.original_tweet.retweet_num}}</small>
-                  </a>
-                {% else %}
-                  <a class="reply-icon" href="{% url 'retweet' tweet.original_tweet.id %}">
-                    <span class="glyphicon glyphicon-retweet"></span>
-                    <small>{{tweet.original_tweet.retweet_num}}</small>
-                  </a>
-                {% endif %}
+            {% if tweet.has_been_retweeded %}
+              <a class="reply-icon" href="{% url 'unretweet' tweet.id %}">
+                <span class="glyphicon glyphicon-retweet"></span>
+                <small>{{tweet.retweet_num}}</small>
+              </a>
             {% else %}
-                <a class="reply-icon" href="{% url 'retweet' tweet.id %}">
-                  <span class="glyphicon glyphicon-retweet"></span>
-                </a>
+              <a class="reply-icon" href="{% url 'retweet' tweet.id %}">
+                <span class="glyphicon glyphicon-retweet"></span>
+                {% if tweet.retweet_num %}
+                  <small>{{tweet.retweet_num}}</small>
+                {% endif %}
+              </a>
             {% endif %}
           </div>
             
@@ -53,7 +50,6 @@
         {% include './reply_form.html' %}
         {% include './reply_details.html' %}
       </div>
-
       
     {% endwith %}
   {% endwith %}
