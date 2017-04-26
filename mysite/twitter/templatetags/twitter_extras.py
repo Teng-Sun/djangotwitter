@@ -14,12 +14,12 @@ def display_time(value):
     
     if delta >= timedelta(hours=24):
         return value.strftime('%b %d')
-    elif delta >= timedelta(hours=1):
+    elif delta > timedelta(hours=1):
         delta_hours = int(delta_seconds / seconds_per_hour)
-        return "%dhours" %delta_hours
+        return ("%dhour" %delta_hours if delta_hours == 1 else "%dhours" %delta_hours)
     elif delta >= timedelta(minutes=1):
         delta_mins = int(delta_seconds / seconds_per_min)
-        return "%dmins" %delta_mins
+        return ("%dmin" %delta_mins if delta_mins == 1 else "%dmins" %delta_mins)
     elif delta >= timedelta(seconds=1):
         return "%ds" %int(delta_seconds)
     else:
