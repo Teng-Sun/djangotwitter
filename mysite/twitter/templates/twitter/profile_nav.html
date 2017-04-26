@@ -1,20 +1,18 @@
 {% if request.user.username != visited_user.username %}
   {% if request.session.login_follow_visited %}
-    <form method="POST" action="{% url 'unfollow' visited_user.username %}" name="unfollow">
-      {% csrf_token %}
-        <button class="btn button-right button-unfollow" type="submit">
+    <a href="{% url 'unfollow' visited_user.username %}">
+      <button class="btn button-right button-unfollow">
           <span class="glyphicon glyphicon-minus"></span>
           Unfollow
         </button>
-    </form>
+    </a>
   {% else %}
-    <form method="POST" action="{% url 'follow' visited_user.username %}" name="follow">
-      {% csrf_token %}
-        <button class="btn button-base-color button-right" type="submit">
+    <a href="{% url 'follow' visited_user.username %}">
+      <button class="btn button-base-color button-right">
           <span class="glyphicon glyphicon-plus"></span>
           Follow
         </button>
-    </form>
+    </a>
   {% endif %}
 {% endif %}
 <div>
