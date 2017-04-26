@@ -81,3 +81,11 @@ def unlike(request, tweet_id):
     if like:
         like.delete()
     return redirect(request.META.get('HTTP_REFERER'))
+
+@login_required
+def delete(request, tweet_id):
+    tweet = Tweet.objects.get(pk=tweet_id)
+    original_tweet = handler.get_original_tweet(tweet)
+    original_tweet.delete()
+    return redirect(request.META.get('HTTP_REFERER'))
+

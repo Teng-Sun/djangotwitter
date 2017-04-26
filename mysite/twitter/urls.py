@@ -20,4 +20,5 @@ urlpatterns = [
     url(r'^unretweet/(?P<tweet_id>\w+)$', tweet.unretweet, name="unretweet"),
     url(r'^like/(?P<tweet_id>\w+)$', tweet.like, name='like'),
     url(r'^unlike/(?P<tweet_id>\w+)$', tweet.unlike, name='unlike'),
+    url(r'^delete/(?P<tweet_id>\w+)$', tweet.delete, name='delete'),
 ]
