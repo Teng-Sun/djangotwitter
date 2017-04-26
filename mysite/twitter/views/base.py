@@ -33,7 +33,7 @@ def index(request):
 
 def profile(request, username):
     visited_user, tweet_list, following_list, \
-        follower_list = set_profile_subnav_session(request, username)
+        follower_list, like_list = set_profile_subnav_session(request, username)
 
     paginate_by = 10
 
@@ -62,7 +62,7 @@ def post_tweet(request):
 
 def following(request, username):
     visited_user, tweet_list, following_list, \
-        follower_list = set_profile_subnav_session(request, username)
+        follower_list, like_list = set_profile_subnav_session(request, username)
     paginate_by = 10
     followings = pagination(request, following_list, paginate_by)
     return render(request, 'twitter/following.html', {
@@ -73,7 +73,7 @@ def following(request, username):
 
 def follower(request, username):
     visited_user, tweet_list, following_list, \
-        follower_list = set_profile_subnav_session(request, username)
+        follower_list, like_list = set_profile_subnav_session(request, username)
     paginate_by = 10
     followers = pagination(request, follower_list, paginate_by)
     return render(request, 'twitter/follower.html', {
@@ -81,6 +81,20 @@ def follower(request, username):
         'followers': followers,
         'object_list': followers,
     })
+
+@login_required
+def likes(request, username):
+    visited_user, tweet_list, following_list, \
+        follower_list, like = set_profile_subnav_session(request, username)
+
+    paginate_by = 10
+    like_list = pagination(request, like, paginate_by)
+    return render(request, 'twitter/likes.html', {
+        'visited_user': visited_user,
+        'like_list': like_list,
+        'object_list': like_list,
+    })
+
 
 @login_required
 def follow(request, username):

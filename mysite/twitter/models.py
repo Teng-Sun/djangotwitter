@@ -45,7 +45,7 @@ class Reply(models.Model):
 
 class Like(models.Model):
     tweet = models.ForeignKey(Tweet, on_delete=models.CASCADE)
-    author = models.ForeignKey(User)
+    author = models.ForeignKey(User, on_delete=models.CASCADE)
     like_date = models.DateTimeField(default=timezone.now)
 
     class Meta:

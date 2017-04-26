@@ -39,10 +39,10 @@
       </a>
     </li>
     <li>
-      <a href="{% url 'profile' visited_user.username %}">
+      <a href="{% url 'likes' visited_user.username %}">
         LIKES
         <br/>
-        <span class="badge">{{ likes|length }}</span>
+        <span class="badge">{{ request.session.like_num }}</span>
       </a>
     </li>
   </ul>

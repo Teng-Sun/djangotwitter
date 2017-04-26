@@ -6,7 +6,7 @@ from .base import *
 from .tweet import *
 
 
-from twitter.models import Tweet, Reply, Followship
+from twitter.models import Tweet, Reply, Followship, Like
 
 def get_original_tweet(tweet):
     original_tweet = tweet
@@ -30,20 +30,28 @@ def profile_subnav(request, username):
     visited_user = User.objects.get(username=username)
     login_user = request.user
     tweet_list = list(visited_user.tweet_set.all())
+    like_list = Like.objects.filter(author=visited_user)
 
     for tweet in tweet_list:
         original_tweet = get_original_tweet(tweet)
+        
         if Tweet.objects.filter(author=login_user, original_tweet=original_tweet):
             tweet.has_been_retweeded = True
         if Tweet.objects.filter(author=visited_user, original_tweet=tweet):
             tweet_list.remove(tweet)
         if tweet.original_tweet:
             tweet.retweet_num = tweet.original_tweet.retweet_num
+        if Like.objects.filter(tweet=original_tweet, author=login_user):
+            tweet.has_been_liked = True
+
         tweet.replies = Reply.objects.filter(tweet=original_tweet)
+        tweet.likes = Like.objects.filter(tweet=original_tweet)
+
+            
 
     following_list = Followship.objects.filter(initiative_user=visited_user).all()
     follower_list = Followship.objects.filter(followed_user=visited_user).all()
-    return visited_user, tweet_list, following_list, follower_list
+    return visited_user, tweet_list, following_list, follower_list, like_list
 
 def validate_followship(login_user, visited_user):
     login_follow_visited = False
@@ -59,7 +67,7 @@ def set_profile_subnav_session(request, username):
     login_user = request.user
 
     visited_user, tweet_list, following_list, \
-        follower_list = profile_subnav(request, username)
+        follower_list, like_list = profile_subnav(request, username)
 
     login_follow_visited, visited_follow_login, \
         = validate_followship(login_user, visited_user)
@@ -67,11 +75,12 @@ def set_profile_subnav_session(request, username):
     request.session['tweet_num'] = len(tweet_list)
     request.session['following_num'] = len(following_list)
     request.session['follower_num'] = len(follower_list)
+    request.session['like_num'] = len(like_list)
 
     request.session['login_follow_visited'] = login_follow_visited
     request.session['visited_follow_login'] = visited_follow_login
 
-    return visited_user, tweet_list, following_list, follower_list
+    return visited_user, tweet_list, following_list, follower_list, like_list
 
 def pagination(request, objcet_list, paginate_by):
     paginator = Paginator(objcet_list, paginate_by)

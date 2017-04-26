@@ -1,14 +1,12 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
-from twitter.models import Tweet
+from twitter.models import Tweet, Like
 from twitter.forms import ReplyForm
 
 import handler
 # from .handler import *
 from .base import *
 from .tweet import *
-
-
 
 
 @login_required
@@ -64,12 +62,22 @@ def reply(request, tweet_id):
 @login_required
 def like(request, tweet_id):
     tweet = Tweet.objects.get(pk=tweet_id)
+    original_tweet = handler.get_original_tweet(tweet)
     user = request.user
-    if not Like.objects.filter(tweet=tweet, author=user):
-        like_tweet = Like(
+    if not Like.objects.filter(tweet=original_tweet, author=user):
+        new_like = Like(
             author = user,
             tweet = tweet,
         )
-        like_tweet.save()
+        new_like.save()
     return redirect(request.META.get('HTTP_REFERER'))
 
+@login_required
+def unlike(request, tweet_id):
+    tweet = Tweet.objects.get(pk=tweet_id)
+    original_tweet = handler.get_original_tweet(tweet)
+    user = request.user
+    like = Like.objects.get(tweet=original_tweet, author=user)
+    if like:
+        like.delete()
+    return redirect(request.META.get('HTTP_REFERER'))
