@@ -8,10 +8,7 @@
 .button-right {
     float: right;
 }
-.reply-icon {
-    padding-right: 40px;
-    display: inline;
-}
+
 .no-tweet {
     margin: 40px;
 }
@@ -28,13 +25,31 @@
     font-weight: 400;
 }
 
-a.reply-icon {
+.tweet-icon {
+    padding-right: 40px;
+    display: inline;
+}
+a.tweet-icon {
     text-decoration: none;
     color: #333;
 }
-a.reply-icon:hover {
+
+a.tweet-icon:hover {
     color: #428bca;
+    text-decoration: none;
 }
+
+a.retweeted-icon {
+    color: #17bf63;
+    text-decoration: none;
+}
+
+a.like-icon {
+    color: #e0245e;
+    text-decoration: none;
+}
+
+
 .reply-input {
     display: none;
 }
@@ -44,8 +59,4 @@ a.reply-icon:hover {
 
 input.message-text {
     height: 37px;
-}
-
-.retweeted-icon {
-    color: #17bf63;
 }
