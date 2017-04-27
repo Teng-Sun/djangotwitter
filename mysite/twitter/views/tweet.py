@@ -67,7 +67,7 @@ def like(request, tweet_id):
     if not Like.objects.filter(tweet=original_tweet, author=user):
         new_like = Like(
             author = user,
-            tweet = tweet,
+            tweet = original_tweet,
         )
         new_like.save()
     return redirect(request.META.get('HTTP_REFERER'))
