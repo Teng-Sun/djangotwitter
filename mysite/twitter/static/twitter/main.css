@@ -43,6 +43,10 @@ a.retweeted-icon {
     color: #17bf63;
     text-decoration: none;
 }
+.retweeted-icon {
+    color: #17bf63;
+    text-decoration: none;
+}
 
 a.like-icon {
     color: #e0245e;
