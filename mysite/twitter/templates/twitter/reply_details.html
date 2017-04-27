@@ -1,12 +1,16 @@
 {% load humanize %}
 
-<ul>
+<ul class="reply-line">
 {% for reply in tweet.replies %}
-  <li>
+    <li>
+    <hr>
     <span>@{{reply.author.username}}</span>
     <span>・</span>
     <small class="time">{{reply.reply_date|naturaltime}}</small>
     <p>{{reply.content}}</p>
-  </li>
+    {% include './tweet_icon.html' %}
+    </li>
 {% endfor %}
 </ul>
+
+    

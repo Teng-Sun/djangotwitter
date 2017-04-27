@@ -15,6 +15,7 @@
                 <small class="time">{{ tweet.created_date|display_time }} ago</small>
               </div>
               <p>{{ tweet.content }}</p>
+              {% include './tweet_icon.html' %}
           {% endwith %}
       {% endfor %}
 
