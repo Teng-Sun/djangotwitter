@@ -40,9 +40,11 @@
     {% endif %}
     
   </div>
+  {% if tweet.author == request.user %}
   <div class="col-sm-1">
     <a class="tweet-icon" href="{% url 'delete' tweet.id %}">
       <span class="glyphicon glyphicon-trash"></span>
     </a>
   </div>
+  {% endif %}
 </div>
