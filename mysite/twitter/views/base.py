@@ -86,15 +86,18 @@ def follower(request, username):
 @login_required
 def likes(request, username):
     visited_user = User.objects.get(username=username)
-    likes = Like.objects.filter(author=visited_user)
+    likes = Like.objects.filter(author=visited_user) or []
     show_likes = get_show_likes(likes, request.user)
     paginate_by = 10
     like_list = pagination(request, show_likes, paginate_by)
+
     return render(request, 'twitter/likes.html', {
         'visited_user': visited_user,
-        'like_list': like_list,
+        'tweets': like_list,
         'object_list': like_list,
     })
+
+
 
 
 @login_required

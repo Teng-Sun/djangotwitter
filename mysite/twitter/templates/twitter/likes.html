@@ -1,25 +1,9 @@
 {% extends "./base.html" %}
 
-{% load twitter_extras %}
-
-
 {% block main %}
   {% include './profile_nav.html' %}
-  <div>
-      {% for like in like_list %}
-          {% with like.tweet as tweet %}
-              <hr>
-              <div>
-                <span>@{{ tweet.author.username }}</span>
-                <span>・</span>
-                <small class="time">{{ tweet.created_date|display_time }} ago</small>
-              </div>
-              <p>{{ tweet.content }}</p>
-              {% include './tweet_icon.html' %}
-          {% endwith %}
-      {% endfor %}
-
+  {% if tweets %}
+    {% include "./tweet_list.html" %}
     {% include "./pagination.html" %}
-      
-  </div>
+  {% endif %}
 {% endblock %}
