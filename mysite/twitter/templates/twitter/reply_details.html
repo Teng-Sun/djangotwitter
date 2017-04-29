@@ -1,16 +1,19 @@
-{% load humanize %}
+{% load twitter_extras %}
 
-<ul class="reply-line">
-{% for reply in tweet.replies %}
-    <li>
+{% for replies in tweet.replies_list %}
+  <div>
+    <ul class="reply-items">
+      {% for reply in replies %}
+        <li>
+          <div class="reply-header">
+            <span>@{{reply.author.username}}</span>
+            <span>・</span>
+            <small class="time">{{reply.created_date|display_time}}</small>
+          </div>
+          <p>{{reply.content}}</p>
+        </li>
+      {% endfor %}
+    </ul>
     <hr>
-    <span>@{{reply.author.username}}</span>
-    <span>・</span>
-    <small class="time">{{reply.reply_date|naturaltime}}</small>
-    <p>{{reply.content}}</p>
-    {% include './tweet_icon.html' %}
-    </li>
+  </div>
 {% endfor %}
-</ul>
-
-    

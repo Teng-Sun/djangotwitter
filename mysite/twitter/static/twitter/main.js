@@ -1,8 +1,8 @@
 (function() {
 
     $('input.message-text').keyup(function() {
-        var coun = $(this).data('coun');
-        var elem = '#reply-submit-button-' + coun;
+        var tweet_id = $(this).data('tweet-id');
+        var elem = '#reply-submit-button-' + tweet_id;
         if($(this).val() !== '') {
             $(elem).removeAttr('disabled');
         } else {
@@ -11,8 +11,8 @@
     })
 
     $('.reply-icon').click(function() {
-        var counter = $(this).data('counter');
-        var reply_input = '#reply-input-' + counter;
+        var tweet_id = $(this).data('tweet-id');
+        var reply_input = '#reply-input-' + tweet_id;
         $(reply_input).toggle();
     })
 

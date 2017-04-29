@@ -32,12 +32,13 @@ def index(request):
     return render(request, 'twitter/index.html')
 
 def profile(request, username):
-    visited_user, tweet_list, following_list, \
-        follower_list, like_list = set_profile_subnav_session(request, username)
+    visited_user = set_profile_subnav_session(request, username)
+    tweet_list = list(Tweet.objects.filter(author=visited_user))
+    show_tweets = get_show_tweets(tweet_list, visited_user, request.user)
 
     paginate_by = 10
 
-    tweets = pagination(request, tweet_list, paginate_by)
+    tweets = pagination(request, show_tweets, paginate_by)
     return render(request, 'twitter/profile.html', {
         'visited_user': visited_user,
         'tweets': tweets,
@@ -61,8 +62,8 @@ def post_tweet(request):
     })
 
 def following(request, username):
-    visited_user, tweet_list, following_list, \
-        follower_list, like_list = set_profile_subnav_session(request, username)
+    visited_user = User.objects.get(username=username)
+    following_list = Followship.objects.filter(initiative_user=visited_user)
     paginate_by = 10
     followings = pagination(request, following_list, paginate_by)
     return render(request, 'twitter/following.html', {
@@ -72,8 +73,8 @@ def following(request, username):
     })
 
 def follower(request, username):
-    visited_user, tweet_list, following_list, \
-        follower_list, like_list = set_profile_subnav_session(request, username)
+    visited_user = User.objects.get(username=username)
+    follower_list = Followship.objects.filter(followed_user=visited_user)
     paginate_by = 10
     followers = pagination(request, follower_list, paginate_by)
     return render(request, 'twitter/follower.html', {
@@ -84,11 +85,11 @@ def follower(request, username):
 
 @login_required
 def likes(request, username):
-    visited_user, tweet_list, following_list, \
-        follower_list, like = set_profile_subnav_session(request, username)
-
+    visited_user = User.objects.get(username=username)
+    likes = Like.objects.filter(author=visited_user)
+    show_likes = get_show_likes(likes, request.user)
     paginate_by = 10
-    like_list = pagination(request, like, paginate_by)
+    like_list = pagination(request, show_likes, paginate_by)
     return render(request, 'twitter/likes.html', {
         'visited_user': visited_user,
         'like_list': like_list,

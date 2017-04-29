@@ -1,13 +1,13 @@
 {% load twitter_extras %}
 
-  {% if tweet.original_tweet %}
-    <div>
-      <span class="glyphicon glyphicon-retweet retweeted-icon"></span>
-      <small>
-        {{ visited_user.username }} Retweeted
-      </small>
-    </div>
-  {% endif %}
+{% if tweet.original_tweet %}
+  <div>
+    <span class="glyphicon glyphicon-retweet retweeted-icon"></span>
+    <small>
+      {{ visited_user.username }} Retweeted
+    </small>
+  </div>
+{% endif %}
 
 
 <div>
@@ -18,5 +18,5 @@
   {% endif %}
   <span>・</span>
   <small class="time">{{ tweet.created_date|display_time }} ago</small>
+  <p>{{ tweet.content }}</p>
 </div>
-<p>{{ tweet.content }}</p>

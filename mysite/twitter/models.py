@@ -18,6 +18,8 @@ class Tweet(models.Model):
         blank = True,
     )
     retweet_num = models.IntegerField(default=0)
+    like_num = models.IntegerField(default=0)
+    reply_num = models.IntegerField(default=0)
 
     def __str__(self):
         return self.content
@@ -25,23 +27,33 @@ class Tweet(models.Model):
     class Meta:
         ordering = ['-created_date']
 
-class Reply(models.Model):
-    tweet = models.ForeignKey(Tweet, on_delete=models.CASCADE)
-    author = models.ForeignKey(
-        User,
-        related_name="reply_user",
-        on_delete=models.CASCADE,
-        default='',
-        null=True,
-    )
-    content = models.TextField()
-    reply_date = models.DateTimeField(default=timezone.now)
 
-    def __str__(self):
-        return self.content
+class Replyship(models.Model):
+    tweet = models.ForeignKey(
+        Tweet,
+        related_name='be_replied_tweet',
+        on_delete=models.CASCADE
+    )
+    reply = models.ForeignKey(
+        Tweet,
+        related_name='reply_tweet',
+        on_delete=models.CASCADE
+    )
+    tweet_user = models.ForeignKey(
+        User,
+        related_name='be_replied_user',
+    )
+    reply_user = models.ForeignKey(
+        User,
+        related_name='reply_user',
+        on_delete=models.CASCADE,
+    )
+
+    reply_date = models.DateTimeField(default=timezone.now)
 
     class Meta:
         ordering = ['-reply_date']
+
 
 class Like(models.Model):
     tweet = models.ForeignKey(Tweet, on_delete=models.CASCADE)

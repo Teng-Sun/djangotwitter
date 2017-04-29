@@ -1,7 +1,7 @@
 from django import forms
 
 from django.contrib.auth.models import User
-from .models import Tweet, Reply
+from .models import Tweet
 
 
 class TweetForm(forms.ModelForm):
@@ -17,5 +17,5 @@ class RegistrationForm(forms.ModelForm):
 
 class ReplyForm(forms.ModelForm):
     class Meta:
-        model = Reply
+        model = Tweet
         fields = ('content',)

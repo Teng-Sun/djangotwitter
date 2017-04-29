@@ -65,30 +65,11 @@ input.message-text {
     height: 37px;
 }
 
-ul.reply-line li {
-    position:relative;
-    margin-bottom: 0;
-    padding-bottom: 0.5em;
-}
-ul.reply-line li:after {
-    content: '';
-    position: absolute;
-    left: -10px; adjust manually
-    top: -30px;
-}
-ul.reply-line li:before {
-    content: '';
-    position: absolute;
-    left: -14px;
-    border-left: 2px solid #1da1f2;
-    height: 100%;
-    width: 1px;
+ul.reply-items {
+    margin-left: -3em;
+    list-style-type: none;
 }
 
-ul.reply-line li:first-child:before {
-    top: 30px;
-}
-
-ul.reply-line li:last-child:before {
-    height: 34px;
+ul.reply-items > li:first-child > .reply-header {
+    background-color: #f4ede7;
 }

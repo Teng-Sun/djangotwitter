@@ -6,13 +6,63 @@ from .base import *
 from .tweet import *
 
 
-from twitter.models import Tweet, Reply, Followship, Like
+from twitter.models import Tweet, Replyship, Followship, Like
 
 def get_original_tweet(tweet):
-    original_tweet = tweet
-    if tweet.original_tweet:
-        original_tweet = Tweet.objects.get(pk=tweet.original_tweet.id)
-    return original_tweet
+    return tweet.original_tweet or tweet
+
+def get_reply_replies(reply, reply_list):
+    replyships = Replyship.objects.filter(tweet=reply)
+    for replyship in replyships:
+        new_reply = replyship.reply
+        reply_list.append(new_reply)
+        get_reply_replies(new_reply, reply_list)
+
+def get_tweet_replies(tweet, replies_list):
+    replyships = Replyship.objects.filter(tweet=tweet)
+    for index, replyship in enumerate(replyships):
+        reply = replyship.reply
+        reply_list = [reply]
+        get_reply_replies(reply, reply_list)
+        replies_list.append([])
+        replies_list[index] = reply_list
+   
+def get_show_tweets(tweet_list, visited_user, login_user):
+    show_tweets = list(tweet_list)
+    for tweet in tweet_list:
+        original_tweet = get_original_tweet(tweet)
+        tweet.retweet_num = original_tweet.retweet_num
+        tweet.like_num = original_tweet.like_num
+        tweet.reply_num = original_tweet.reply_num
+        
+        if Like.objects.filter(author=login_user, tweet=original_tweet):
+            tweet.has_been_liked = True
+        if Tweet.objects.filter(author=login_user, original_tweet=original_tweet):
+            tweet.has_been_retweeded = True
+        if Tweet.objects.filter(author=visited_user, original_tweet=tweet):
+            show_tweets.remove(tweet)
+
+        tweet.replies_list = []
+        get_tweet_replies(tweet, tweet.replies_list)
+        
+    return show_tweets
+
+def get_show_likes(likes, login_user):
+    show_tweets = []
+    for like in likes:
+        tweet = like.tweet
+
+        tweet.replies_list = []
+        get_tweet_replies(tweet, tweet.replies_list)
+
+        if Like.objects.filter(author=login_user, tweet=tweet):
+            tweet.has_been_liked = True
+        if Tweet.objects.filter(author=login_user, original_tweet=tweet):
+            tweet.has_been_retweeded = True
+
+        show_tweets.append(tweet)
+    return show_tweets
+
 
 def create_tweet(author, content, original_tweet, date):
     new_tweet = Tweet(
@@ -26,32 +76,14 @@ def create_tweet(author, content, original_tweet, date):
     return new_tweet
 
 
-def profile_subnav(request, username):
+def profile_subnav_title(request, username):
     visited_user = User.objects.get(username=username)
-    login_user = request.user
-    tweet_list = list(visited_user.tweet_set.all())
-    like_list = Like.objects.filter(author=visited_user)
+    tweet_num = len(Tweet.objects.filter(author=visited_user, original_tweet__isnull=True))
+    following_num = len(Followship.objects.filter(initiative_user=visited_user))
+    follower_num = len(Followship.objects.filter(followed_user=visited_user))
+    like_num = len(Like.objects.filter(author=visited_user))
 
-    for tweet in tweet_list:
-        original_tweet = get_original_tweet(tweet)
-        
-        if Tweet.objects.filter(author=login_user, original_tweet=original_tweet):
-            tweet.has_been_retweeded = True
-        if Tweet.objects.filter(author=visited_user, original_tweet=tweet):
-            tweet_list.remove(tweet)
-        if tweet.original_tweet:
-            tweet.retweet_num = tweet.original_tweet.retweet_num
-        if Like.objects.filter(tweet=original_tweet, author=login_user):
-            tweet.has_been_liked = True
-
-        tweet.replies = Reply.objects.filter(tweet=original_tweet)
-        tweet.likes = Like.objects.filter(tweet=original_tweet)
-
-            
-
-    following_list = Followship.objects.filter(initiative_user=visited_user).all()
-    follower_list = Followship.objects.filter(followed_user=visited_user).all()
-    return visited_user, tweet_list, following_list, follower_list, like_list
+    return visited_user, tweet_num, following_num, follower_num, like_num
 
 def validate_followship(login_user, visited_user):
     login_follow_visited = False
@@ -65,22 +97,20 @@ def validate_followship(login_user, visited_user):
 
 def set_profile_subnav_session(request, username):
     login_user = request.user
-
-    visited_user, tweet_list, following_list, \
-        follower_list, like_list = profile_subnav(request, username)
+    visited_user, tweet_num, following_num, \
+        follower_num, like_num = profile_subnav_title(request, username)
 
     login_follow_visited, visited_follow_login, \
         = validate_followship(login_user, visited_user)
 
-    request.session['tweet_num'] = len(tweet_list)
-    request.session['following_num'] = len(following_list)
-    request.session['follower_num'] = len(follower_list)
-    request.session['like_num'] = len(like_list)
-
+    request.session['tweet_num'] = tweet_num
+    request.session['following_num'] = following_num
+    request.session['follower_num'] = follower_num
+    request.session['like_num'] = like_num
     request.session['login_follow_visited'] = login_follow_visited
     request.session['visited_follow_login'] = visited_follow_login
+    return visited_user
 
-    return visited_user, tweet_list, following_list, follower_list, like_list
 
 def pagination(request, objcet_list, paginate_by):
     paginator = Paginator(objcet_list, paginate_by)

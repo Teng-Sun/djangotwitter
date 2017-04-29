@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
-from twitter.models import Tweet, Like
-from twitter.forms import ReplyForm
+from twitter.models import Tweet, Like, Replyship
+from twitter.forms import TweetForm
 
 import handler
 # from .handler import *
@@ -46,17 +46,24 @@ def reply(request, tweet_id):
     user = request.user
     original_tweet = handler.get_original_tweet(tweet)
     if request.method == 'POST':
-        reply_form = ReplyForm(request.POST)
+        reply_form = TweetForm(request.POST)
         if reply_form.is_valid():
-            reply = reply_form.save(commit=False)
-            reply.tweet = original_tweet
-            reply.author = user
-            reply.save()
-
-            new_tweet = handler.create_tweet(user, reply.content, original_tweet=None, date=None)
+            new_tweet = reply_form.save(commit=False)
+            new_tweet.author = user
             new_tweet.save()
+
+            replyship = Replyship(
+                tweet = original_tweet,
+                reply = new_tweet,
+                tweet_user = original_tweet.author,
+                reply_user = user,
+            )
+            replyship.save()
+
+            tweet.reply_num += 1
+            tweet.save()
     else:
-        reply_form = ReplyForm()
+        reply_form = TweetForm()
     return redirect(request.META.get('HTTP_REFERER'))
 
 @login_required
@@ -70,6 +77,8 @@ def like(request, tweet_id):
             tweet = original_tweet,
         )
         new_like.save()
+        original_tweet.like_num += 1
+        original_tweet.save()
     return redirect(request.META.get('HTTP_REFERER'))
 
 @login_required
@@ -80,12 +89,20 @@ def unlike(request, tweet_id):
     like = Like.objects.get(tweet=original_tweet, author=user)
     if like:
         like.delete()
+        original_tweet.like_num -= 1
+        original_tweet.save()
     return redirect(request.META.get('HTTP_REFERER'))
 
 @login_required
 def delete(request, tweet_id):
     tweet = Tweet.objects.get(pk=tweet_id)
-    original_tweet = handler.get_original_tweet(tweet)
-    original_tweet.delete()
+    if tweet and tweet.author == request.user:
+        original_tweet = handler.get_original_tweet(tweet)
+        replyship = Replyship.objects.filter(reply=original_tweet)
+        if replyship:
+            replyship[0].tweet.reply_num -= 1
+            replyship[0].tweet.save()
+        original_tweet.delete()
+    
     return redirect(request.META.get('HTTP_REFERER'))
 

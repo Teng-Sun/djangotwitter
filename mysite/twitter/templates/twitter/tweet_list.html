@@ -1,12 +1,10 @@
 {% for tweet in tweets %}
-  {% with  forloop.counter as coun %}
-      <hr>
-      
-      {% include './tweet_details.html' %}
+  <hr>
+  
+  {% include './tweet_details.html' %}
 
-      {% include './tweet_icon.html' %}
+  {% include './tweet_icon.html' %}
 
-      {% include './reply.html' %}
+  {% include './reply.html' %}
       
-  {% endwith %}
 {% endfor %}
