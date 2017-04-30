@@ -1,0 +1,10 @@
+{% extends './base.html' %}
+
+{% block main %}
+  <div>
+    {% if tweets %}
+      {% include "./tweet_list.html" %}
+      {% include "./pagination.html" %}
+    {% endif %}
+  </div>
+{% endblock %}

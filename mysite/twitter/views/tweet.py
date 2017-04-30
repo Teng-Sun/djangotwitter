@@ -1,7 +1,8 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
-from twitter.models import Tweet, Like, Replyship
+from twitter.models import Tweet, Like, Replyship, Notification
 from twitter.forms import TweetForm
+
 
 import handler
 # from .handler import *
@@ -21,8 +22,7 @@ def retweet(request, tweet_id):
         original_tweet.retweet_num += 1
         original_tweet.save()
 
-        new_tweet = handler.create_tweet(user, original_tweet.content, original_tweet, date=None)
-        new_tweet.save()
+        handler.create_tweet(user, original_tweet.content, original_tweet)
    
     return redirect(request.META.get('HTTP_REFERER'))
 
@@ -49,8 +49,7 @@ def reply(request, tweet_id):
         reply_form = TweetForm(request.POST)
         if reply_form.is_valid():
             new_tweet = reply_form.save(commit=False)
-            new_tweet.author = user
-            new_tweet.save()
+            handler.create_tweet(user, new_tweet.content, original_tweet=None)
 
             replyship = Replyship(
                 tweet = original_tweet,
@@ -105,4 +104,9 @@ def delete(request, tweet_id):
         original_tweet.delete()
     
     return redirect(request.META.get('HTTP_REFERER'))
+
+
+    
+
+
 

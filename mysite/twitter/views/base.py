@@ -9,6 +9,22 @@ from .handler import *
 from .base import *
 from .tweet import *
 
+
+def notification(request):
+    user = request.user
+    notifications = Notification.objects.filter(notificated_user=user)
+    tweet_list = []
+    for notification in notifications:
+        tweet_list.append(notification.tweet)
+
+
+    get_show_tweets(tweet_list, user, user)
+    paginate_by = 10
+    tweets = pagination(request, tweet_list, paginate_by)
+    return render(request, 'twitter/notification.html', {
+        'tweets': tweets,
+    })
+
 def register(request):
     if request.method == 'POST':
         form = RegistrationForm(request.POST)
@@ -31,6 +47,9 @@ def register(request):
 def index(request):
     return render(request, 'twitter/index.html')
 
+
+
+
 def profile(request, username):
     visited_user = set_profile_subnav_session(request, username)
     tweet_list = list(Tweet.objects.filter(author=visited_user))
@@ -46,14 +65,14 @@ def profile(request, username):
     })
 
 
+
 @login_required
 def post_tweet(request):
     if request.method == 'POST':
         form = TweetForm(request.POST)
         if form.is_valid():
             tweet = form.save(commit=False)
-            tweet.author = request.user
-            tweet.save()
+            create_tweet(request.user, tweet.content, original_tweet=None)
             return redirect('profile', username=request.user.username)
     else:
         form = TweetForm()

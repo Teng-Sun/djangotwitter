@@ -75,3 +75,25 @@ class Followship(models.Model):
         on_delete=models.CASCADE,
     )
     date_follow = models.DateTimeField(default=timezone.now)
+
+class Notification(models.Model):
+    tweet = models.ForeignKey(
+        Tweet,
+        on_delete=models.CASCADE,
+    )
+    initiative_user = models.ForeignKey(
+        User,
+        related_name='notificate_user',
+        on_delete=models.CASCADE,
+    )
+    notificated_user = models.ForeignKey(
+        User,
+        related_name='notificated_user',
+        on_delete=models.CASCADE,
+    )
+    notificate_date = models.DateTimeField(
+        default = timezone.now
+    )
+    class Meta:
+        ordering = ['-notificate_date']
+

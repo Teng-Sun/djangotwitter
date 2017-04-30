@@ -14,6 +14,7 @@ urlpatterns = [
     url(r'^likes/(?P<username>\w+)/$', base.likes, name='likes'),
     url(r'^follow/(?P<username>\w+)/$', base.follow, name="follow"),
     url(r'^unfollow/(?P<username>\w+)/$', base.unfollow, name="unfollow"),
+    url(r'^notification/$', base.notification, name='notification'),
 
     url(r'^reply/(?P<tweet_id>\w+)/$', tweet.reply, name="reply"),
     url(r'^retweet/(?P<tweet_id>\w+)$', tweet.retweet, name="retweet"),

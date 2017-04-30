@@ -1,12 +1,42 @@
 from django.contrib.auth.models import User
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+import re
 
 from .handler import *
 from .base import *
 from .tweet import *
 
 
-from twitter.models import Tweet, Replyship, Followship, Like
+from twitter.models import Tweet, Replyship, Followship, Like, Notification
+
+
+def create_notifications(tweet):
+    content = tweet.content
+
+    initiative_user = tweet.author
+    print 'content', content, 'initiative_user', initiative_user
+    reg = '(?<=^|(?<=[^a-zA-Z0-9-_\.]))@([A-Za-z]+[A-Za-z0-9]+)'
+    usernames = re.findall(reg, content)
+    print 'usernames', usernames
+    for username in usernames:
+        user = User.objects.get(username=username)
+        notification = Notification(
+            tweet=tweet,
+            initiative_user = initiative_user,
+            notificated_user = user,
+        )
+        notification.save()
+
+def create_tweet(author, content, original_tweet):
+    new_tweet = Tweet(
+        author = author,
+        content = content,
+    )
+    if original_tweet:
+        new_tweet.original_tweet = original_tweet
+    new_tweet.save()
+    create_notifications(new_tweet)
+    return new_tweet
 
 def get_original_tweet(tweet):
     return tweet.original_tweet or tweet
@@ -62,19 +92,6 @@ def get_show_likes(likes, login_user):
 
         show_tweets.append(tweet)
     return show_tweets
-
-
-def create_tweet(author, content, original_tweet, date):
-    new_tweet = Tweet(
-        author = author,
-        content = content,
-    )
-    if original_tweet:
-        new_tweet.original_tweet = original_tweet
-    if date:
-        new_tweet.created_date = date
-    return new_tweet
-
 
 def profile_subnav_title(request, username):
     visited_user = User.objects.get(username=username)
