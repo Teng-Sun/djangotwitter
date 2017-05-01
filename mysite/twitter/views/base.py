@@ -5,6 +5,8 @@ def index(request):
     stream_list = []
     if user.is_authenticated():
         streams = Stream.objects.filter(receiver=user)
+        for stream in streams:
+            get_tweet_data(stream.tweet, user, user)
         paginate_by = 10
         stream_list = pagination(request, streams, paginate_by)
     return render(request, 'twitter/index.html', {
