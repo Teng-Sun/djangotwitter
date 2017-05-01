@@ -1,5 +1,14 @@
 (function() {
 
+
+    (function() {
+        var url = window.location;
+        $('ul.nav-pills a').filter(function() {
+             return this.href == url;
+        }).parent().addClass('active');
+    })()
+
+
     $('input.message-text').keyup(function() {
         var tweet_id = $(this).data('tweet-id');
         var elem = '#reply-submit-button-' + tweet_id;
