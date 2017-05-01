@@ -73,3 +73,11 @@ ul.reply-items {
 ul.reply-items > li:first-child > .reply-header {
     background-color: #f4ede7;
 }
+
+.notificated-tweet {
+    border: 1px solid #d7effd;
+}
+.inner-notification {
+    padding-left: 1em;
+    padding-top: 0.5em;
+}

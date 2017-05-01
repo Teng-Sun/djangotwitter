@@ -77,9 +77,18 @@ class Followship(models.Model):
     date_follow = models.DateTimeField(default=timezone.now)
 
 class Notification(models.Model):
+    notificate_type = (
+        ('L', 'like'),
+        ('T', 'tweet'),
+        ('R', 'retweet'),
+        ('F', 'Follow')
+    )
+
     tweet = models.ForeignKey(
         Tweet,
         on_delete=models.CASCADE,
+        null=True,
+        blank = True,
     )
     initiative_user = models.ForeignKey(
         User,
@@ -90,6 +99,11 @@ class Notification(models.Model):
         User,
         related_name='notificated_user',
         on_delete=models.CASCADE,
+    )
+    notificate_type = models.CharField(
+        max_length = 1,
+        choices = notificate_type,
+        default = 'T'
     )
     notificate_date = models.DateTimeField(
         default = timezone.now

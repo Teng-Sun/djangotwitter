@@ -10,19 +10,21 @@ from .base import *
 from .tweet import *
 
 
+
+
 def notification(request):
     user = request.user
     notifications = Notification.objects.filter(notificated_user=user)
-    tweet_list = []
     for notification in notifications:
-        tweet_list.append(notification.tweet)
+        tweet = notification.tweet
+        handler.get_tweet_data(tweet, user, user)
+        notification.subtitle = get_notification_subtitle(tweet, notification.notificate_type)
 
-
-    get_show_tweets(tweet_list, user, user)
     paginate_by = 10
-    tweets = pagination(request, tweet_list, paginate_by)
+    notification_list = pagination(request, notifications, paginate_by)
+
     return render(request, 'twitter/notification.html', {
-        'tweets': tweets,
+        'notification_list': notification_list,
     })
 
 def register(request):

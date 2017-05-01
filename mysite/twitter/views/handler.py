@@ -10,22 +10,44 @@ from .tweet import *
 from twitter.models import Tweet, Replyship, Followship, Like, Notification
 
 
-def create_notifications(tweet):
-    content = tweet.content
 
-    initiative_user = tweet.author
-    print 'content', content, 'initiative_user', initiative_user
+def create_notification(initiative_user, notificated_user, notificate_type, tweet):
+    notification = Notification(
+        initiative_user = initiative_user,
+        notificated_user = notificated_user,
+        notificate_type = notificate_type,
+    )
+    if tweet:
+        notification.tweet = tweet
+    notification.save()
+
+def search_username(content):
     reg = '(?<=^|(?<=[^a-zA-Z0-9-_\.]))@([A-Za-z]+[A-Za-z0-9]+)'
     usernames = re.findall(reg, content)
-    print 'usernames', usernames
+    return usernames
+
+def notificate_users(usernames, initiative_user, notificate_type, tweet):
     for username in usernames:
         user = User.objects.get(username=username)
-        notification = Notification(
-            tweet=tweet,
-            initiative_user = initiative_user,
-            notificated_user = user,
-        )
-        notification.save()
+        create_notification(initiative_user, user, notificate_type, tweet)
+
+def get_notification_subtitle(tweet, notificate_type):
+    if tweet.original_tweet:
+        if notificate_type == 'T':
+            subtitle = 'Replied your Retweet'
+        elif notificate_type == 'L':
+            subtitle = 'Liked your Retweet'
+        else:
+            subtitle = 'Retweeted your Retweet'
+    else:
+        if notificate_type == 'T':
+            subtitle = 'Replied your tweet'
+        elif notificate_type == 'L':
+            subtitle = 'Liked your tweet'
+        else:
+            subtitle = 'Retweeted your tweet'
+    return subtitle
+
 
 def create_tweet(author, content, original_tweet):
     new_tweet = Tweet(
@@ -34,10 +56,17 @@ def create_tweet(author, content, original_tweet):
     )
     if original_tweet:
         new_tweet.original_tweet = original_tweet
+        
     new_tweet.save()
-    create_notifications(new_tweet)
+
+    usernames = search_username(content)
+    if original_tweet:
+        notificate_users(usernames, author, 'R', new_tweet)
+    else:
+        notificate_users(usernames, author, 'T', new_tweet)
     return new_tweet
 
+    
 def get_original_tweet(tweet):
     return tweet.original_tweet or tweet
 
@@ -56,25 +85,26 @@ def get_tweet_replies(tweet, replies_list):
         get_reply_replies(reply, reply_list)
         replies_list.append([])
         replies_list[index] = reply_list
+
+def get_tweet_data(tweet, visited_user, login_user):
+    original_tweet = get_original_tweet(tweet)
+    tweet.retweet_num = original_tweet.retweet_num
+    tweet.like_num = original_tweet.like_num
+    tweet.reply_num = original_tweet.reply_num
+    if Like.objects.filter(author=login_user, tweet=original_tweet):
+        tweet.has_been_liked = True
+    if Tweet.objects.filter(author=login_user, original_tweet=original_tweet):
+        tweet.has_been_retweeded = True
+    tweet.replies_list = []
+    get_tweet_replies(tweet, tweet.replies_list)
+    return tweet
    
 def get_show_tweets(tweet_list, visited_user, login_user):
     show_tweets = list(tweet_list)
     for tweet in tweet_list:
-        original_tweet = get_original_tweet(tweet)
-        tweet.retweet_num = original_tweet.retweet_num
-        tweet.like_num = original_tweet.like_num
-        tweet.reply_num = original_tweet.reply_num
-        
-        if Like.objects.filter(author=login_user, tweet=original_tweet):
-            tweet.has_been_liked = True
-        if Tweet.objects.filter(author=login_user, original_tweet=original_tweet):
-            tweet.has_been_retweeded = True
+        get_tweet_data(tweet, visited_user, login_user)
         if Tweet.objects.filter(author=visited_user, original_tweet=tweet):
             show_tweets.remove(tweet)
-
-        tweet.replies_list = []
-        get_tweet_replies(tweet, tweet.replies_list)
-        
     return show_tweets
 
 def get_show_likes(likes, login_user):

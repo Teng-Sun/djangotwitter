@@ -1,10 +1,45 @@
 {% extends './base.html' %}
 
+{% load twitter_extras %}
+
 {% block main %}
   <div>
-    {% if tweets %}
-      {% include "./tweet_list.html" %}
-      {% include "./pagination.html" %}
-    {% endif %}
+  {% if notification_list %}
+    {% for notification in notification_list %}
+      {% with notification.tweet as tweet %}
+        <hr>
+        <div>
+          <span>@{{notification.initiative_user.username}}</span>
+          <span>・</span>
+        <span>{{notification.notificate_date|display_time}}</span>
+        </div>
+        <p>{{notification.subtitle}}</p>
+        <div>
+          {% if notification.notificate_type == 'T' %}
+            <p>{{tweet.content}}</p>
+            {% include './tweet_icon.html' %}
+            {% include './reply.html' %}
+
+          {% else %}
+            <div class="notificated-tweet">
+              <div class="inner-notification">
+                {% if tweet.original_tweet %}
+                  <p>@{{tweet.original_tweet.author}}</p>
+                  <p>{{tweet.original_tweet.content}}</p>
+                {% else %}
+                  <p>@{{tweet.author}}</p>
+                  <p>{{tweet.content}}</p>
+                {% endif %}
+              </div>
+            </div>
+          {% endif %}
+        </div>
+        
+      {% endwith %}
+    {% endfor %}
+
+    {% include "./pagination.html" %}
+  {% endif %}
+
   </div>
 {% endblock %}

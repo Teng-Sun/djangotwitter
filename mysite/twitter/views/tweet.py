@@ -22,8 +22,9 @@ def retweet(request, tweet_id):
         original_tweet.retweet_num += 1
         original_tweet.save()
 
-        handler.create_tweet(user, original_tweet.content, original_tweet)
-   
+        new_tweet = handler.create_tweet(user, original_tweet.content, original_tweet)
+        handler.create_notification(user, tweet.author, 'R', new_tweet)
+
     return redirect(request.META.get('HTTP_REFERER'))
 
 @login_required
@@ -48,12 +49,12 @@ def reply(request, tweet_id):
     if request.method == 'POST':
         reply_form = TweetForm(request.POST)
         if reply_form.is_valid():
-            new_tweet = reply_form.save(commit=False)
-            handler.create_tweet(user, new_tweet.content, original_tweet=None)
+            new_reply = reply_form.save(commit=False)
 
+            reply = handler.create_tweet(user, new_reply.content, original_tweet=None)
             replyship = Replyship(
                 tweet = original_tweet,
-                reply = new_tweet,
+                reply = reply,
                 tweet_user = original_tweet.author,
                 reply_user = user,
             )
@@ -61,6 +62,8 @@ def reply(request, tweet_id):
 
             tweet.reply_num += 1
             tweet.save()
+
+            handler.create_notification(user, tweet.author, 'T', reply)
     else:
         reply_form = TweetForm()
     return redirect(request.META.get('HTTP_REFERER'))
@@ -78,6 +81,11 @@ def like(request, tweet_id):
         new_like.save()
         original_tweet.like_num += 1
         original_tweet.save()
+
+        handler.create_notification(user, tweet.author, 'L', tweet)
+        usernames = handler.search_username(tweet.content)
+        handler.notificate_users(usernames, user, 'L', tweet)
+
     return redirect(request.META.get('HTTP_REFERER'))
 
 @login_required
@@ -90,6 +98,13 @@ def unlike(request, tweet_id):
         like.delete()
         original_tweet.like_num -= 1
         original_tweet.save()
+
+        Notification.objects.filter(
+            initiative_user = user,
+            notificate_type = 'L',
+            tweet = tweet
+        ).delete()
+
     return redirect(request.META.get('HTTP_REFERER'))
 
 @login_required
@@ -104,9 +119,3 @@ def delete(request, tweet_id):
         original_tweet.delete()
     
     return redirect(request.META.get('HTTP_REFERER'))
-
-
-    
-
-
-
