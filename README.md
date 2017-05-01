@@ -1,1 +1,1 @@
-Django Tiwtter
+Django Twitter
