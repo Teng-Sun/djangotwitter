@@ -4,7 +4,6 @@ from django.db import models
 from django.utils import timezone
 from django.contrib.auth.models import User
 
-
 class Tweet(models.Model):
     author = models.ForeignKey(User)
     content = models.TextField()
@@ -111,3 +110,32 @@ class Notification(models.Model):
     class Meta:
         ordering = ['-notificate_date']
 
+
+class Stream(models.Model):
+    stream_type = (
+        ('T', 'tweet'),
+        ('Y', 'reply'),
+        ('R', 'retweet'),
+    )
+    receiver = models.ForeignKey(
+        User,
+        on_delete = models.CASCADE,
+        null = True,
+        blank = True,
+    )
+    tweet = models.ForeignKey(
+        Tweet,
+        on_delete = models.CASCADE,
+    )
+    stream_type = models.CharField(
+        max_length = 1,
+        choices = stream_type,
+        default = 'T'
+    )
+    stream_date = models.DateTimeField(default=timezone.now)
+
+    class Meta:
+        ordering = ['-stream_date']
+
+    def __str__(self):
+        return self.receiver

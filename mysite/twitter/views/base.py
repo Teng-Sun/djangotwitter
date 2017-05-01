@@ -1,14 +1,16 @@
-from django.shortcuts import render, redirect
-from django.contrib.auth.models import User
-from django.core.exceptions import ObjectDoesNotExist
-from django.contrib.auth.decorators import login_required
-
-from twitter.forms import TweetForm, RegistrationForm
-
 from .handler import *
-from .base import *
-from .tweet import *
 
+def index(request):
+    user = request.user
+    stream_list = []
+    if user.is_authenticated():
+        streams = Stream.objects.filter(receiver=user)
+        paginate_by = 10
+        stream_list = pagination(request, streams, paginate_by)
+    return render(request, 'twitter/index.html', {
+        'stream_list': stream_list,
+        'object_list': stream_list,
+    })
 
 def notification(request):
     user = request.user
@@ -16,7 +18,7 @@ def notification(request):
     for notification in notifications:
         tweet = notification.tweet
         if tweet:
-            handler.get_tweet_data(tweet, user, user)
+            get_tweet_data(tweet, user, user)
         notification.subtitle = get_notification_subtitle(notification.notificate_type, tweet)
 
     paginate_by = 10
@@ -46,11 +48,6 @@ def register(request):
         'form': form,
     })
 
-def index(request):
-    return render(request, 'twitter/index.html')
-
-
-
 
 def profile(request, username):
     visited_user = set_profile_subnav_session(request, username)
@@ -74,7 +71,8 @@ def post_tweet(request):
         form = TweetForm(request.POST)
         if form.is_valid():
             tweet = form.save(commit=False)
-            create_tweet(request.user, tweet.content, original_tweet=None)
+            new_tweet = create_tweet(request.user, tweet.content, original_tweet=None)
+            cretae_streams(new_tweet, 'T')
             return redirect('profile', username=request.user.username)
     else:
         form = TweetForm()

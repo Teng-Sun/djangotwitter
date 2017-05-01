@@ -1,13 +1,4 @@
-from django.shortcuts import render, redirect
-from django.contrib.auth.decorators import login_required
-from twitter.models import Tweet, Like, Replyship, Notification
-from twitter.forms import TweetForm
-
-
-import handler
-# from .handler import *
 from .base import *
-from .tweet import *
 
 
 @login_required
@@ -15,15 +6,16 @@ def retweet(request, tweet_id):
     tweet = Tweet.objects.get(pk=tweet_id)
     user = request.user
 
-    original_tweet = handler.get_original_tweet(tweet)
+    original_tweet = get_original_tweet(tweet)
 
     if not Tweet.objects.filter(author=user, original_tweet=original_tweet):
         
         original_tweet.retweet_num += 1
         original_tweet.save()
 
-        new_tweet = handler.create_tweet(user, original_tweet.content, original_tweet)
-        handler.create_notification(user, tweet.author, 'R', new_tweet)
+        new_tweet = create_tweet(user, original_tweet.content, original_tweet)
+        create_notification(user, tweet.author, 'R', new_tweet)
+        cretae_streams(new_tweet, 'R')
 
     return redirect(request.META.get('HTTP_REFERER'))
 
@@ -32,7 +24,7 @@ def unretweet(request, tweet_id):
     tweet = Tweet.objects.get(pk=tweet_id)
     user = request.user
 
-    original_tweet = handler.get_original_tweet(tweet)
+    original_tweet = get_original_tweet(tweet)
 
     if Tweet.objects.filter(author=user, original_tweet=original_tweet):
         original_tweet.retweet_num -= 1
@@ -45,13 +37,13 @@ def unretweet(request, tweet_id):
 def reply(request, tweet_id):
     tweet = Tweet.objects.get(pk=tweet_id)
     user = request.user
-    original_tweet = handler.get_original_tweet(tweet)
+    original_tweet = get_original_tweet(tweet)
     if request.method == 'POST':
         reply_form = TweetForm(request.POST)
         if reply_form.is_valid():
             new_reply = reply_form.save(commit=False)
 
-            reply = handler.create_tweet(user, new_reply.content, original_tweet=None)
+            reply = create_tweet(user, new_reply.content, original_tweet=None)
             replyship = Replyship(
                 tweet = original_tweet,
                 reply = reply,
@@ -63,7 +55,9 @@ def reply(request, tweet_id):
             tweet.reply_num += 1
             tweet.save()
 
-            handler.create_notification(user, tweet.author, 'T', reply)
+            create_notification(user, tweet.author, 'T', reply)
+
+            cretae_streams(reply, 'Y')
     else:
         reply_form = TweetForm()
     return redirect(request.META.get('HTTP_REFERER'))
@@ -71,7 +65,7 @@ def reply(request, tweet_id):
 @login_required
 def like(request, tweet_id):
     tweet = Tweet.objects.get(pk=tweet_id)
-    original_tweet = handler.get_original_tweet(tweet)
+    original_tweet = get_original_tweet(tweet)
     user = request.user
     if not Like.objects.filter(tweet=original_tweet, author=user):
         new_like = Like(
@@ -82,16 +76,16 @@ def like(request, tweet_id):
         original_tweet.like_num += 1
         original_tweet.save()
 
-        handler.create_notification(user, tweet.author, 'L', tweet)
-        usernames = handler.search_username(tweet.content)
-        handler.notificate_users(usernames, user, 'L', tweet)
+        create_notification(user, tweet.author, 'L', tweet)
+        usernames = search_username(tweet.content)
+        notificate_users(usernames, user, 'L', tweet)
 
     return redirect(request.META.get('HTTP_REFERER'))
 
 @login_required
 def unlike(request, tweet_id):
     tweet = Tweet.objects.get(pk=tweet_id)
-    original_tweet = handler.get_original_tweet(tweet)
+    original_tweet = get_original_tweet(tweet)
     user = request.user
     like = Like.objects.get(tweet=original_tweet, author=user)
     if like:
@@ -111,7 +105,7 @@ def unlike(request, tweet_id):
 def delete(request, tweet_id):
     tweet = Tweet.objects.get(pk=tweet_id)
     if tweet and tweet.author == request.user:
-        original_tweet = handler.get_original_tweet(tweet)
+        original_tweet = get_original_tweet(tweet)
         replyship = Replyship.objects.filter(reply=original_tweet)
         if replyship:
             replyship[0].tweet.reply_num -= 1

@@ -1,14 +1,44 @@
 from django.contrib.auth.models import User
+from django.shortcuts import render, redirect
+from django.core.exceptions import ObjectDoesNotExist
+from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 import re
 
-from .handler import *
-from .base import *
-from .tweet import *
+from twitter.models import Tweet, Replyship, Followship, Like, Notification, Stream
+from twitter.forms import TweetForm, RegistrationForm
 
+def cretae_stream(receiver, tweet, stream_type):
+    stream = Stream(
+        receiver = receiver,
+        tweet = tweet,
+        stream_type = stream_type,
+    )
+    stream.save()
+    
+def get_receivers(tweet, stream_type):
+    user = tweet.author
+    followships = Followship.objects.filter(followed_user=user)
+    receivers = []
+    for followship in followships:
+        if stream_type == 'Y':
+            replyships = Replyship.objects.filter(reply=tweet, tweet_user=user)
+            if replyships:
+                reply_user = replyships[0].reply_user
+                follow_followeship = Followship.objects.filter(
+                    initiative_user = followship.initiative_user,
+                    followed_user = reply_user
+                )
+                if follow_followeship:
+                    receivers.append(followship.initiative_user)
+        else:
+            receivers.append(followship.initiative_user)
+    return receivers
 
-from twitter.models import Tweet, Replyship, Followship, Like, Notification
-
+def cretae_streams(tweet, stream_type):
+    receivers = get_receivers(tweet, stream_type)
+    for receiver in receivers:
+        cretae_stream(receiver, tweet, stream_type)
 
 
 def create_notification(initiative_user, notificated_user, notificate_type, tweet):
@@ -61,6 +91,7 @@ def create_tweet(author, content, original_tweet):
         new_tweet.original_tweet = original_tweet
 
     new_tweet.save()
+
 
     usernames = search_username(content)
     if original_tweet:

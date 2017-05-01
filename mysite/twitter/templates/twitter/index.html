@@ -2,8 +2,20 @@
 
 {% block main %}
   {% if user.is_authenticated %}
-    {% if tweets %}
-      {% include "./tweet_list.html" %}
+    {% if stream_list %}
+      {% for stream in stream_list %}
+        {% with stream.tweet as tweet %}
+          <hr>
+  
+          {% include './tweet_details.html' %}
+
+          {% include './tweet_icon.html' %}
+
+          {% include './reply.html' %}
+
+        {% endwith %}
+      {% endfor %}
+      {% include "./pagination.html" %}
     {% else %}
       <a href="{% url 'explore' %}">Explore</a>
     {% endif %}
