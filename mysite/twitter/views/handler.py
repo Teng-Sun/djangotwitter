@@ -31,21 +31,24 @@ def notificate_users(usernames, initiative_user, notificate_type, tweet):
         user = User.objects.get(username=username)
         create_notification(initiative_user, user, notificate_type, tweet)
 
-def get_notification_subtitle(tweet, notificate_type):
-    if tweet.original_tweet:
-        if notificate_type == 'T':
-            subtitle = 'Replied your Retweet'
-        elif notificate_type == 'L':
-            subtitle = 'Liked your Retweet'
+def get_notification_subtitle(notificate_type, tweet):
+    if tweet:
+        if tweet.original_tweet:
+            if notificate_type == 'T':
+                subtitle = 'Replied your Retweet'
+            elif notificate_type == 'L':
+                subtitle = 'Liked your Retweet'
+            else:
+                subtitle = 'Retweeted your Retweet'
         else:
-            subtitle = 'Retweeted your Retweet'
+            if notificate_type == 'T':
+                subtitle = 'Replied your tweet'
+            elif notificate_type == 'L':
+                subtitle = 'Liked your tweet'
+            else:
+                subtitle = 'Retweeted your tweet'
     else:
-        if notificate_type == 'T':
-            subtitle = 'Replied your tweet'
-        elif notificate_type == 'L':
-            subtitle = 'Liked your tweet'
-        else:
-            subtitle = 'Retweeted your tweet'
+        subtitle = 'Followed you'
     return subtitle
 
 
@@ -56,7 +59,7 @@ def create_tweet(author, content, original_tweet):
     )
     if original_tweet:
         new_tweet.original_tweet = original_tweet
-        
+
     new_tweet.save()
 
     usernames = search_username(content)

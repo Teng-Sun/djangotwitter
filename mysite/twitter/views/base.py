@@ -10,21 +10,21 @@ from .base import *
 from .tweet import *
 
 
-
-
 def notification(request):
     user = request.user
     notifications = Notification.objects.filter(notificated_user=user)
     for notification in notifications:
         tweet = notification.tweet
-        handler.get_tweet_data(tweet, user, user)
-        notification.subtitle = get_notification_subtitle(tweet, notification.notificate_type)
+        if tweet:
+            handler.get_tweet_data(tweet, user, user)
+        notification.subtitle = get_notification_subtitle(notification.notificate_type, tweet)
 
     paginate_by = 10
     notification_list = pagination(request, notifications, paginate_by)
 
     return render(request, 'twitter/notification.html', {
         'notification_list': notification_list,
+        'object_list': notification_list,
     })
 
 def register(request):
@@ -120,7 +120,6 @@ def likes(request, username):
 
 
 
-
 @login_required
 def follow(request, username):
     login_user = request.user
@@ -135,6 +134,7 @@ def follow(request, username):
                 initiative_user = login_user,
             )
             follow.save()
+            create_notification(login_user, visited_user, 'F', tweet=None)
     return redirect('profile', username=username)
 
 @login_required

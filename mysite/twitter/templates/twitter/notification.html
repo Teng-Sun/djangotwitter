@@ -3,23 +3,22 @@
 {% load twitter_extras %}
 
 {% block main %}
-  <div>
   {% if notification_list %}
     {% for notification in notification_list %}
-      {% with notification.tweet as tweet %}
-        <hr>
-        <div>
-          <span>@{{notification.initiative_user.username}}</span>
-          <span>・</span>
+      <hr>
+      <div>
+        <span>@{{notification.initiative_user.username}}</span>
+        <span>・</span>
         <span>{{notification.notificate_date|display_time}}</span>
-        </div>
-        <p>{{notification.subtitle}}</p>
-        <div>
+      </div>
+      <p>{{notification.subtitle}}</p>
+
+      {% if notification.tweet %}
+        {% with notification.tweet as tweet %}
           {% if notification.notificate_type == 'T' %}
             <p>{{tweet.content}}</p>
             {% include './tweet_icon.html' %}
             {% include './reply.html' %}
-
           {% else %}
             <div class="notificated-tweet">
               <div class="inner-notification">
@@ -33,13 +32,11 @@
               </div>
             </div>
           {% endif %}
-        </div>
-        
-      {% endwith %}
+        {% endwith %}
+      {% endif %}
+      
     {% endfor %}
 
     {% include "./pagination.html" %}
   {% endif %}
-
-  </div>
 {% endblock %}
