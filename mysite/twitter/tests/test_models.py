@@ -63,3 +63,12 @@ class HandleTest(TestCase):
         users = set([self.admin])
         receivers = handler.get_receivers(self.reply_from_admin_to_user3, 'Y')
         self.assertEqual(receivers, users)
+
+
+    def test_check_followship_should_admin_not_follow_user1(self):
+        followship = handler.check_followship(self.admin, self.user1)
+        self.assertEqual(followship, False)
+
+    def test_check_followship_should_user1_follows_admin(self):
+        followship = handler.check_followship(self.user1, self.admin)
+        self.assertEqual(followship, True)
