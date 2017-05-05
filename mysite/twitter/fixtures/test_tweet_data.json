@@ -1,0 +1,106 @@
+[
+{
+    "model": "twitter.tweet",
+    "pk": 1,
+    "fields": {
+        "author": 1,
+        "content": "tweet from admin",
+        "created_date": "2017-05-04T22:26:46.209Z",
+        "original_tweet": null,
+        "retweet_num": 0,
+        "like_num": 0,
+        "reply_num": 0
+    }
+},
+{
+    "model": "twitter.tweet",
+    "pk": 2,
+    "fields": {
+        "author": 2,
+        "content": "tweet from user1",
+        "created_date": "2017-05-04T22:27:51.382Z",
+        "original_tweet": null,
+        "retweet_num": 0,
+        "like_num": 0,
+        "reply_num": 0
+    }
+},
+{
+    "model": "twitter.tweet",
+    "pk": 3,
+    "fields": {
+        "author": 3,
+        "content": "tweet from user2",
+        "created_date": "2017-05-04T22:34:31.472Z",
+        "original_tweet": null,
+        "retweet_num": 0,
+        "like_num": 0,
+        "reply_num": 1
+    }
+},
+{
+    "model": "twitter.tweet",
+    "pk": 4,
+    "fields": {
+        "author": 4,
+        "content": "tweet from user3",
+        "created_date": "2017-05-04T22:35:19.953Z",
+        "original_tweet": null,
+        "retweet_num": 0,
+        "like_num": 0,
+        "reply_num": 0
+    }
+},
+{
+    "model": "twitter.tweet",
+    "pk": 5,
+    "fields": {
+        "author": 1,
+        "content": "reply from admin to admin",
+        "created_date": "2017-05-04T22:30:19.953Z",
+        "original_tweet": null,
+        "retweet_num": 0,
+        "like_num": 0,
+        "reply_num": 0
+    }
+},
+{
+    "model": "twitter.tweet",
+    "pk": 6,
+    "fields": {
+        "author": 1,
+        "content": "reply from admin to user1",
+        "created_date": "2017-05-04T22:36:19.953Z",
+        "original_tweet": null,
+        "retweet_num": 0,
+        "like_num": 0,
+        "reply_num": 0
+    }
+},
+{
+    "model": "twitter.tweet",
+    "pk": 7,
+    "fields": {
+        "author": 1,
+        "content": "reply from admin to user2",
+        "created_date": "2017-05-04T22:37:19.953Z",
+        "original_tweet": null,
+        "retweet_num": 0,
+        "like_num": 0,
+        "reply_num": 0
+    }
+},
+{
+    "model": "twitter.tweet",
+    "pk": 8,
+    "fields": {
+        "author": 1,
+        "content": "reply from admin to user3",
+        "created_date": "2017-05-04T22:38:19.953Z",
+        "original_tweet": null,
+        "retweet_num": 0,
+        "like_num": 0,
+        "reply_num": 0
+    }
+}
+]

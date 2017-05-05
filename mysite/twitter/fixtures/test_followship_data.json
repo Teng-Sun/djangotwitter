@@ -1,0 +1,29 @@
+[
+{
+    "model": "twitter.followship",
+    "pk": 1,
+    "fields": {
+        "followed_user": 1,
+        "initiative_user": 2,
+        "date_follow": "2017-05-01T03:44:43.140Z"
+    }
+},
+{
+    "model": "twitter.followship",
+    "pk": 2,
+    "fields": {
+        "followed_user": 1,
+        "initiative_user": 3,
+        "date_follow": "2017-05-01T10:35:00.695Z"
+    }
+},
+{
+    "model": "twitter.followship",
+    "pk": 3,
+    "fields": {
+        "followed_user": 2,
+        "initiative_user": 3,
+        "date_follow": "2017-05-04T22:24:20.170Z"
+    }
+}
+]
