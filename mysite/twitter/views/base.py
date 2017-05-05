@@ -126,12 +126,11 @@ def follow(request, username):
     visited_user = User.objects.get(username=username)
 
     if login_user != visited_user:
-        login_follow_visited, _ = validate_followship(login_user, visited_user)
 
-        if not login_follow_visited:
+        if not check_followship(login_user, visited_user):
             follow = Followship(
-                followed_user = visited_user,
                 initiative_user = login_user,
+                followed_user = visited_user,
             )
             follow.save()
             create_notification(login_user, visited_user, 'F', tweet=None)
@@ -143,11 +142,10 @@ def unfollow(request, username):
     visited_user = User.objects.get(username=username)
 
     if login_user != visited_user:
-        login_follow_visited, _ \
-            = validate_followship(login_user, visited_user)
-        if login_follow_visited:
+        if check_followship(login_user, visited_user):
             followship = Followship.objects.get(
-                followed_user=visited_user, initiative_user=login_user
+                initiative_user=login_user,
+                followed_user=visited_user,
             )
             followship.delete()
     return redirect('profile', username=username)

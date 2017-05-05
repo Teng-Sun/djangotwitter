@@ -15,6 +15,12 @@ def cretae_stream(receiver, tweet, stream_type):
         stream_type = stream_type,
     )
     stream.save()
+
+def check_followship(initiative_user, followed_user):
+    return bool(Followship.objects.filter(
+        initiative_user=initiative_user,
+        followed_user=followed_user
+    ))
     
 def get_receivers(tweet, stream_type):
     user = tweet.author
@@ -28,13 +34,8 @@ def get_receivers(tweet, stream_type):
                 reply_user = replyships[0].reply_user
                 be_replied_user = replyships[0].tweet_user
 
-                be_replied_user_followship = Followship.objects.filter(
-                    initiative_user=be_replied_user,
-                    followed_user=user)
-                follower_followship = Followship.objects.filter(
-                    initiative_user = follower,
-                    followed_user = be_replied_user
-                )
+                be_replied_user_followship = check_followship(be_replied_user, user)
+                follower_followship = check_followship(follower, be_replied_user)
 
                 if be_replied_user_followship:
                     receivers.add(be_replied_user)
@@ -175,30 +176,17 @@ def profile_subnav_title(request, username):
 
     return visited_user, tweet_num, following_num, follower_num, like_num
 
-def validate_followship(login_user, visited_user):
-    login_follow_visited = False
-    visited_follow_login = False
-
-    if Followship.objects.filter(followed_user=visited_user, initiative_user=login_user).all():
-        login_follow_visited = True
-    if Followship.objects.filter(followed_user=login_user, initiative_user=visited_user).all():
-        visited_follow_login = True
-    return login_follow_visited, visited_follow_login
-
 def set_profile_subnav_session(request, username):
     login_user = request.user
     visited_user, tweet_num, following_num, \
         follower_num, like_num = profile_subnav_title(request, username)
 
-    login_follow_visited, visited_follow_login, \
-        = validate_followship(login_user, visited_user)
-
     request.session['tweet_num'] = tweet_num
     request.session['following_num'] = following_num
     request.session['follower_num'] = follower_num
     request.session['like_num'] = like_num
-    request.session['login_follow_visited'] = login_follow_visited
-    request.session['visited_follow_login'] = visited_follow_login
+    request.session['login_follow_visited'] = bool(check_followship(login_user, visited_user))
+    request.session['visited_follow_login'] = bool(check_followship(visited_user, login_user))
     return visited_user
 
 
