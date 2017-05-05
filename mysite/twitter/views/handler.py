@@ -18,21 +18,30 @@ def cretae_stream(receiver, tweet, stream_type):
     
 def get_receivers(tweet, stream_type):
     user = tweet.author
+    receivers = set([user])
     followships = Followship.objects.filter(followed_user=user)
-    receivers = []
     for followship in followships:
+        follower = followship.initiative_user
         if stream_type == 'Y':
-            replyships = Replyship.objects.filter(reply=tweet, tweet_user=user)
+            replyships = Replyship.objects.filter(reply=tweet)
             if replyships:
                 reply_user = replyships[0].reply_user
-                follow_followeship = Followship.objects.filter(
-                    initiative_user = followship.initiative_user,
-                    followed_user = reply_user
+                be_replied_user = replyships[0].tweet_user
+
+                be_replied_user_followship = Followship.objects.filter(
+                    initiative_user=be_replied_user,
+                    followed_user=user)
+                follower_followship = Followship.objects.filter(
+                    initiative_user = follower,
+                    followed_user = be_replied_user
                 )
-                if follow_followeship:
-                    receivers.append(followship.initiative_user)
+
+                if be_replied_user_followship:
+                    receivers.add(be_replied_user)
+                if follower_followship:
+                    receivers.add(follower)
         else:
-            receivers.append(followship.initiative_user)
+            receivers.add(follower)
     return receivers
 
 def cretae_streams(tweet, stream_type):
