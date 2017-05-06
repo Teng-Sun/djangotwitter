@@ -29,6 +29,9 @@ class HandleTest(TestCase):
         self.reply_from_admin_to_user3 = Tweet.objects.get(pk=8)
 
 
+
+
+
     def test_get_receivers_should_be_adminuser12_stream_type_tweet(self):
         users = set([self.admin, self.user1, self.user2])
         receivers = handler.get_receivers(self.tweet_from_admin, 'T')
@@ -85,3 +88,57 @@ class HandleTest(TestCase):
             self.assertIn(stream.receiver, receivers)
 
 
+
+    def test_search_username_begin_with_shape(self):
+        content = '#hello'
+        username_should_be = []
+        usernames = handler.search_username(content)
+        self.assertEqual(usernames, username_should_be)
+
+    def test_search_username_with_sharp(self):
+        content = '@#hello'
+        username_should_be = []
+        usernames = handler.search_username(content)
+        self.assertEqual(usernames, username_should_be)
+
+    def test_search_username_with_sharp_between(self):
+        content = '@h#ello'
+        username_should_be = ['h']
+        usernames = handler.search_username(content)
+        self.assertEqual(usernames, username_should_be)
+
+    def test_search_username_with_no_username(self):
+        content = 'tweet content'
+        username_should_be = []
+        usernames = handler.search_username(content)
+        self.assertEqual(usernames, username_should_be)
+
+    def test_search_username_with_one_begin(self):
+        content = '@hello tweet content'
+        username_should_be = ['hello']
+        usernames = handler.search_username(content)
+        self.assertEqual(usernames, username_should_be)
+
+    def test_search_username_with_one_not_begin(self):
+        content = 'tweet @hello content'
+        username_should_be = ['hello']
+        usernames = handler.search_username(content)
+        self.assertEqual(usernames, username_should_be)
+
+    def test_search_username_with_one_no_space(self):
+        content = 'tweet@hello content '
+        username_should_be = ['hello']
+        usernames = handler.search_username(content)
+        self.assertEqual(usernames, username_should_be)
+
+    def test_search_username_with_two_or_more_in_a_row(self):
+        content = '@hello @world tweet content'
+        username_should_be = ['hello', 'world']
+        usernames = handler.search_username(content)
+        self.assertEqual(usernames, username_should_be)
+
+    def test_search_username_with_two_or_more_seperate(self):
+        content = '@hello tweet @world content'
+        username_should_be = ['hello', 'world']
+        usernames = handler.search_username(content)
+        self.assertEqual(usernames, username_should_be)
