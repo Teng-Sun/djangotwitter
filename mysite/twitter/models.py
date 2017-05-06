@@ -138,4 +138,4 @@ class Stream(models.Model):
         ordering = ['-stream_date']
 
     def __str__(self):
-        return self.receiver
+        return str(self.receiver)
