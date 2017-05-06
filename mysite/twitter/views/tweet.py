@@ -15,7 +15,7 @@ def retweet(request, tweet_id):
 
         new_tweet = create_tweet(user, original_tweet.content, original_tweet)
         create_notification(user, tweet.author, 'R', new_tweet)
-        cretae_streams(new_tweet, 'R')
+        create_streams(new_tweet, 'R')
 
     return redirect(request.META.get('HTTP_REFERER'))
 
@@ -57,7 +57,7 @@ def reply(request, tweet_id):
 
             create_notification(user, tweet.author, 'T', reply)
 
-            cretae_streams(reply, 'Y')
+            create_streams(reply, 'Y')
     else:
         reply_form = TweetForm()
     return redirect(request.META.get('HTTP_REFERER'))

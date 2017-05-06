@@ -45,7 +45,7 @@ def get_receivers(tweet, stream_type):
             receivers.add(follower)
     return receivers
 
-def cretae_streams(tweet, stream_type):
+def create_streams(tweet, stream_type):
     receivers = get_receivers(tweet, stream_type)
     for receiver in receivers:
         cretae_stream(receiver, tweet, stream_type)

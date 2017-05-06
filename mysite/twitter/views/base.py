@@ -74,7 +74,7 @@ def post_tweet(request):
         if form.is_valid():
             tweet = form.save(commit=False)
             new_tweet = create_tweet(request.user, tweet.content, original_tweet=None)
-            cretae_streams(new_tweet, 'T')
+            create_streams(new_tweet, 'T')
             return redirect('profile', username=request.user.username)
     else:
         form = TweetForm()
