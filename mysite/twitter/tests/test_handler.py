@@ -4,7 +4,7 @@ from django.utils import timezone
 from django.test import Client
 
 from twitter.views import handler
-from twitter.models import Tweet
+from twitter.models import Tweet, Stream
 
 class HandleTest(TestCase):
     fixtures = [
@@ -27,7 +27,7 @@ class HandleTest(TestCase):
         self.reply_from_admin_to_user1 = Tweet.objects.get(pk=6)
         self.reply_from_admin_to_user2 = Tweet.objects.get(pk=7)
         self.reply_from_admin_to_user3 = Tweet.objects.get(pk=8)
-        
+
 
     def test_get_receivers_should_be_adminuser12_stream_type_tweet(self):
         users = set([self.admin, self.user1, self.user2])
@@ -72,3 +72,16 @@ class HandleTest(TestCase):
     def test_check_followship_should_user1_follows_admin(self):
         followship = handler.check_followship(self.user1, self.admin)
         self.assertEqual(followship, True)
+
+
+    def test_create_streams(self):
+        tweet = self.tweet_from_admin
+        receivers = [self.admin, self.user1, self.user2]
+        handler.create_streams(tweet, 'T')
+        streams = Stream.objects.filter(tweet=tweet)
+        for stream in streams:
+            self.assertEqual(tweet, stream.tweet)
+            self.assertEqual(stream.stream_type, 'T')
+            self.assertIn(stream.receiver, receivers)
+
+
