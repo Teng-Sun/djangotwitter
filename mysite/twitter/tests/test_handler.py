@@ -4,7 +4,7 @@ from django.utils import timezone
 from django.test import Client
 
 from twitter.views import handler
-from twitter.models import Tweet, Followship
+from twitter.models import Tweet
 
 class HandleTest(TestCase):
     fixtures = [
