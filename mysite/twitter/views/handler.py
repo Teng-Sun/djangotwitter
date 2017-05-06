@@ -62,7 +62,7 @@ def create_notification(initiative_user, notificated_user, notificate_type, twee
     notification.save()
 
 def search_username(content):
-    reg = '(?<=^|(?<=[^a-zA-Z0-9-_\.]))@([A-Za-z]+[A-Za-z0-9]+)'
+    reg = '@(\w+)'
     usernames = re.findall(reg, content)
     return usernames
 
