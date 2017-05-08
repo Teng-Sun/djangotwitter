@@ -2,9 +2,32 @@ from django.contrib.auth.models import AnonymousUser, User
 from django.test import TestCase, RequestFactory
 
 from twitter.views.services import share
+from twitter.models import Notification, Tweet
 
 
 class ShareTest(TestCase):
+    fixtures = [
+        'twitter/fixtures/test_user_data.json',
+        'twitter/fixtures/test_tweet_data.json',
+        'twitter/fixtures/test_replyship_data.json',
+        'twitter/fixtures/test_followship_data.json',
+    ]
+
+    def setUp(self):
+        self.admin = User.objects.get(username='admin')
+        self.user1 = User.objects.get(username='user1')
+        self.user2 = User.objects.get(username='user2')
+
+        self.tweet_from_admin = Tweet.objects.get(pk=1)
+        self.tweet_from_user1 = Tweet.objects.get(pk=2)
+        self.tweet_from_user2 = Tweet.objects.get(pk=3)
+
+        self.reply_from_admin_to_admin = Tweet.objects.get(pk=5)
+        self.reply_from_admin_to_user1 = Tweet.objects.get(pk=6)
+        self.reply_from_admin_to_user2 = Tweet.objects.get(pk=7)
+        self.reply_from_admin_to_user3 = Tweet.objects.get(pk=8)
+
+        self.retweet_from_admin_to_admin = Tweet.objects.get(pk=9)
 
     def test_search_username(self):
         data = [
@@ -22,7 +45,24 @@ class ShareTest(TestCase):
             username = share.search_username(content)
             self.assertEquals(username, username_should_be)
 
-
+    def test_notificate_users(self):
+        data = [
+            ([], None, None),
+            (['user1', 'user2'], 'F', None),
+            (['user1'], 'T', self.reply_from_admin_to_user1),
+            (['admin'], 'R', self.retweet_from_admin_to_admin)
+        ]
+        for usernames, notificate_type, tweet in data:
+            share.notificate_users(usernames, self.admin, notificate_type, tweet)
+            notifications = Notification.objects.filter(initiative_user=self.admin, tweet=tweet)
+            if not usernames:
+                self.assertFalse(notifications)
+            else:
+                for notification in notifications:
+                    self.assertIn(notification.notificated_user.username, usernames)
+                    self.assertEquals(notification.notificate_type, notificate_type)
+                    self.assertEquals(notification.tweet, tweet)
+                    self.assertEquals(notification.initiative_user, self.admin)
 
             
             
