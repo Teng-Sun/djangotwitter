@@ -1,5 +1,4 @@
-from .base import *
-
+from .pages import *
 
 @login_required
 def retweet(request, tweet_id):
