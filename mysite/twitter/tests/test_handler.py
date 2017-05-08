@@ -28,6 +28,7 @@ class HandleTest(TestCase):
         self.reply_from_admin_to_user2 = Tweet.objects.get(pk=7)
         self.reply_from_admin_to_user3 = Tweet.objects.get(pk=8)
 
+        self.retweet_from_admin_to_admin = Tweet.objects.get(pk=9)
 
 
 
@@ -142,3 +143,28 @@ class HandleTest(TestCase):
         username_should_be = ['hello', 'world']
         usernames = handler.search_username(content)
         self.assertEqual(usernames, username_should_be)
+
+
+    def test_get_notification_subtitle_should_be_followed(self):
+        notificate_type = 'F'
+        subtitle_should_be = 'Followed you'
+        subtitle = handler.get_notification_subtitle(notificate_type, tweet=None)
+        self.assertEqual(subtitle, subtitle_should_be)
+
+    def test_get_notification_subtitle_should_be_replied(self):
+        notificate_type = 'T'
+        tweet = self.reply_from_admin_to_admin
+        subtitle_should_be = 'Replied your tweet'
+        subtitle = handler.get_notification_subtitle(notificate_type, tweet)
+        self.assertEqual(subtitle, subtitle_should_be)
+
+    def test_get_notification_subtitle_should_be_replied_retweet(self):
+        notificate_type = 'T'
+        tweet = self.retweet_from_admin_to_admin
+        subtitle_should_be = 'Replied your Retweet'
+        subtitle = handler.get_notification_subtitle(notificate_type, tweet)
+        self.assertEqual(subtitle, subtitle_should_be)
+
+    
+        
+

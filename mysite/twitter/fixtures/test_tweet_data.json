@@ -7,9 +7,9 @@
         "content": "tweet from admin",
         "created_date": "2017-05-04T22:26:46.209Z",
         "original_tweet": null,
-        "retweet_num": 0,
+        "retweet_num": 1,
         "like_num": 0,
-        "reply_num": 0
+        "reply_num": 1
     }
 },
 {
@@ -22,7 +22,7 @@
         "original_tweet": null,
         "retweet_num": 0,
         "like_num": 0,
-        "reply_num": 0
+        "reply_num": 1
     }
 },
 {
@@ -48,7 +48,7 @@
         "original_tweet": null,
         "retweet_num": 0,
         "like_num": 0,
-        "reply_num": 0
+        "reply_num": 1
     }
 },
 {
@@ -98,6 +98,19 @@
         "content": "reply from admin to user3",
         "created_date": "2017-05-04T22:38:19.953Z",
         "original_tweet": null,
+        "retweet_num": 0,
+        "like_num": 0,
+        "reply_num": 0
+    }
+},
+{
+    "model": "twitter.tweet",
+    "pk": 9,
+    "fields": {
+        "author": 1,
+        "content": "retweet from admin to admin",
+        "created_date": "2017-05-04T22:39:19.953Z",
+        "original_tweet": 1,
         "retweet_num": 0,
         "like_num": 0,
         "reply_num": 0
