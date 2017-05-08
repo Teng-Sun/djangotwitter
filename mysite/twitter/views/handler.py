@@ -8,6 +8,13 @@ import re
 from twitter.models import Tweet, Replyship, Followship, Like, Notification, Stream
 from twitter.forms import TweetForm, RegistrationForm
 
+def check_followship(initiative_user, followed_user):
+    return bool(Followship.objects.filter(
+        initiative_user=initiative_user,
+        followed_user=followed_user
+    ))
+
+
 def cretae_stream(receiver, tweet, stream_type):
     stream = Stream(
         receiver = receiver,
@@ -16,12 +23,6 @@ def cretae_stream(receiver, tweet, stream_type):
     )
     stream.save()
 
-def check_followship(initiative_user, followed_user):
-    return bool(Followship.objects.filter(
-        initiative_user=initiative_user,
-        followed_user=followed_user
-    ))
-    
 def get_receivers(tweet, stream_type):
     user = tweet.author
     receivers = set([user])
@@ -68,8 +69,9 @@ def search_username(content):
 
 def notificate_users(usernames, initiative_user, notificate_type, tweet):
     for username in usernames:
-        user = User.objects.get(username=username)
-        create_notification(initiative_user, user, notificate_type, tweet)
+        user = User.objects.filter(username=username)
+        if user:
+            create_notification(initiative_user, user[0], notificate_type, tweet)
 
 def get_notification_subtitle(notificate_type, tweet):
     if tweet:
@@ -88,7 +90,8 @@ def get_notification_subtitle(notificate_type, tweet):
             else:
                 subtitle = 'Retweeted your tweet'
     else:
-        subtitle = 'Followed you'
+        if notificate_type == 'F':
+            subtitle = 'Followed you'
     return subtitle
 
 
