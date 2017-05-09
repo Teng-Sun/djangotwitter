@@ -22,7 +22,7 @@ def notification(request):
         tweet = notification.tweet
         if tweet:
             get_tweet_data(tweet, user, user)
-        notification.subtitle = get_notification_subtitle(notification.notificate_type, tweet)
+        notification.subtitle = get_notification_subtitle(notification.notificate_type)
 
     paginate_by = 10
     notification_list = pagination(request, notifications, paginate_by)
