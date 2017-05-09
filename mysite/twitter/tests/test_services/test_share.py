@@ -64,8 +64,12 @@ class ShareTest(TestCase):
                     self.assertEquals(notification.tweet, tweet)
                     self.assertEquals(notification.initiative_user, self.admin)
 
-            
-            
+    def test_check_followship(self):
+        admin_follows_user1 = share.check_followship(self.admin, self.user1)
+        user1_follows_admin = share.check_followship(self.user1, self.admin)
+        self.assertTrue(user1_follows_admin)
+        self.assertFalse(admin_follows_user1)
+
         
 
 
