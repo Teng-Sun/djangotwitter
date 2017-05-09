@@ -35,7 +35,7 @@ def check_followship(initiative_user, followed_user):
         followed_user=followed_user
     ))
     
-def pagination(request, objcet_list, paginate_by):
+def pagination(objcet_list, paginate_by):
     paginator = Paginator(objcet_list, paginate_by)
     page = request.GET.get('page', 1)
     try:
