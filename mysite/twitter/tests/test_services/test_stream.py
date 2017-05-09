@@ -1,7 +1,7 @@
 from django.contrib.auth.models import User
 from django.test import TestCase
 
-from twitter.models import Tweet
+from twitter.models import Tweet, Stream
 from twitter.views.services import stream
 
 class StreamTest(TestCase):
@@ -57,4 +57,18 @@ class StreamTest(TestCase):
             receivers = stream.get_receivers(tweet)
             self.assertEquals(receivers, receivers_should_be)
 
+    def test_create_streams(self):
+        data = [
+            (self.tweet_from_admin, 'T'),
+            (self.reply_from_admin_to_admin, 'Y'),
+            (self.retweet_from_admin_to_admin, 'R')
 
+        ]
+        for tweet, stream_type in data:
+            stream.create_streams(tweet, stream_type)
+            stream_list = Stream.objects.filter(tweet=tweet)
+            receivers = stream.get_receivers(tweet)
+            for stream_item in stream_list:
+                self.assertEquals(stream_item.tweet, tweet)
+                self.assertEquals(stream_item.stream_type, stream_type)
+                self.assertIn(stream_item.receiver, receivers)
