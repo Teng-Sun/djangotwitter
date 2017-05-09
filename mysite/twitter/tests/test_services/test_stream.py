@@ -41,3 +41,20 @@ class StreamTest(TestCase):
             for index, follower in enumerate(followers):
                 is_receiver_result = stream.is_receiver(tweet, follower)
                 self.assertEquals(results[index], is_receiver_result)
+
+    def test_get_receivers(self):
+        data = [
+            (self.tweet_from_admin, set([self.admin, self.user1, self.user2])),
+            (self.tweet_from_user1, set([self.user1, self.user2])),
+            (self.tweet_from_user2, set([self.user2])),
+            (self.reply_from_admin_to_admin, set([self.admin, self.user1, self.user2])),
+            (self.reply_from_admin_to_user1, set([self.admin, self.user1, self.user2])),
+            (self.reply_from_admin_to_user2, set([self.admin, self.user2])),
+            (self.reply_from_admin_to_user3, set([self.admin])),
+            (self.retweet_from_admin_to_admin, set([self.admin, self.user1, self.user2]))
+        ]
+        for tweet, receivers_should_be in data:
+            receivers = stream.get_receivers(tweet)
+            self.assertEquals(receivers, receivers_should_be)
+
+
