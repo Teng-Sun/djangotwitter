@@ -13,9 +13,9 @@ def create_tweet(author, content, original_tweet):
 
     usernames = search_username(content)
     if original_tweet:
-        notificate_users(usernames, author, 'R', new_tweet)
+        notificate_users(usernames, author, Notification.RETWEET, new_tweet)
     else:
-        notificate_users(usernames, author, 'T', new_tweet)
+        notificate_users(usernames, author, Notification.METION, new_tweet)
     return new_tweet
 
 def get_original_tweet(tweet):

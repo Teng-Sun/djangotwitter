@@ -76,12 +76,23 @@ class Followship(models.Model):
     date_follow = models.DateTimeField(default=timezone.now)
 
 class Notification(models.Model):
-    notificate_type = (
-        ('L', 'like'),
-        ('T', 'tweet'),
-        ('R', 'retweet'),
-        ('F', 'Follow')
-    )
+    MENTION = 'M'
+    REPLY = 'Y'
+    RETWEET = 'R'
+    RETWEET_MENTION = 'RM'
+    LIKE = 'L'
+    LIKE_MENTION = 'LM'
+    FOLLOW = 'F'
+
+    NOTIFICATION_TYPE = [
+        (MENTION, 'mention'),
+        (REPLY, 'reply'),
+        (RETWEET, 'retweet'),
+        (RETWEET_MENTION, 'retweet_mention'),
+        (LIKE, 'like'),
+        (LIKE_MENTION, 'like_mention'),
+        (FOLLOW, 'follow'),
+    ]
 
     tweet = models.ForeignKey(
         Tweet,
@@ -101,8 +112,8 @@ class Notification(models.Model):
     )
     notificate_type = models.CharField(
         max_length = 1,
-        choices = notificate_type,
-        default = 'T'
+        choices = NOTIFICATION_TYPE,
+        default = REPLY
     )
     notificate_date = models.DateTimeField(
         default = timezone.now

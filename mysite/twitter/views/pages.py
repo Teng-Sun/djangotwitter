@@ -134,7 +134,7 @@ def follow(request, username):
                 followed_user = visited_user,
             )
             follow.save()
-            create_notification(login_user, visited_user, 'F', tweet=None)
+            create_notification(login_user, visited_user, Notification.FOLLOW, tweet=None)
     return redirect('profile', username=username)
 
 @login_required

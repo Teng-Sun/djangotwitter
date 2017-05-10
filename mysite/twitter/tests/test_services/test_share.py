@@ -48,9 +48,9 @@ class ShareTest(TestCase):
     def test_notificate_users(self):
         data = [
             ([], None, None),
-            (['user1', 'user2'], 'F', None),
-            (['user1'], 'T', self.reply_from_admin_to_user1),
-            (['admin'], 'R', self.retweet_from_admin_to_admin)
+            (['user1', 'user2'], Notification.FOLLOW, None),
+            (['user1'], Notification.REPLY, self.reply_from_admin_to_user1),
+            (['admin'], Notification.RETWEET, self.retweet_from_admin_to_admin)
         ]
         for usernames, notificate_type, tweet in data:
             share.notificate_users(usernames, self.admin, notificate_type, tweet)

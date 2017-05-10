@@ -1,12 +1,15 @@
 from .share import *
 
-
 def get_notification_subtitle(notificate_type):
+
     notification_type_subtitle = [
-        ('T', 'Replied your tweet'),
-        ('L', 'Liked your tweet'),
-        ('R', 'Retweeted your tweet'),
-        ('F', 'Followed you')
+        (Notification.MENTION, 'Mentioned you.'),
+        (Notification.REPLY, 'Replied your tweet'),
+        (Notification.RETWEET, 'Retweeted your tweet'),
+        (Notification.RETWEET_MENTION, 'Retweet the tweet mentioned you'),
+        (Notification.LIKE, 'Liked your tweet'),
+        (Notification.LIKE_MENTION, 'Liked the tweet mentioned you'),
+        (Notification.FOLLOW, 'Followed you')
     ]
     for kind, subtitle in notification_type_subtitle:
         if kind == notificate_type:

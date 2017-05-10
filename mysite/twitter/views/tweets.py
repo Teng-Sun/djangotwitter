@@ -13,8 +13,8 @@ def retweet(request, tweet_id):
         original_tweet.save()
 
         new_tweet = create_tweet(user, original_tweet.content, original_tweet)
-        create_notification(user, tweet.author, 'R', new_tweet)
-        create_streams(new_tweet, 'R')
+        create_notification(user, tweet.author, Notification.RETWEET, new_tweet)
+        create_streams(new_tweet, Notification.RETWEET)
 
     return redirect(request.META.get('HTTP_REFERER'))
 
@@ -75,9 +75,9 @@ def like(request, tweet_id):
         original_tweet.like_num += 1
         original_tweet.save()
 
-        create_notification(user, tweet.author, 'L', tweet)
+        create_notification(user, tweet.author, Notification.LIKE, tweet)
         usernames = search_username(tweet.content)
-        notificate_users(usernames, user, 'L', tweet)
+        notificate_users(usernames, user, Notification.LIKE, tweet)
 
     return redirect(request.META.get('HTTP_REFERER'))
 
