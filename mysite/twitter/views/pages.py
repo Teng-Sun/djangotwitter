@@ -1,5 +1,7 @@
 from services.base import *
 
+from services import notify
+
 
 def index(request):
     user = request.user
@@ -17,12 +19,12 @@ def index(request):
 
 def notification(request):
     user = request.user
-    notifications = Notification.objects.filter(notificated_user=user)
-    for notification in notifications:
-        tweet = notification.tweet
+    notifications = Notification.objects.filter(notified_user=user)
+    for item in notifications:
+        tweet = item.tweet
         if tweet:
             get_tweet_data(tweet, user, user)
-        notification.subtitle = get_notification_subtitle(notification.notificate_type)
+        item.subtitle = notify.get_subtitle(item.notified_type)
 
     paginate_by = 10
     notification_list = pagination(request, notifications, paginate_by)
@@ -74,7 +76,8 @@ def post_tweet(request):
         form = TweetForm(request.POST)
         if form.is_valid():
             tweet = form.save(commit=False)
-            new_tweet = create_tweet(request.user, tweet.content, original_tweet=None)
+            new_tweet = create_tweet(request.user, tweet.content, None)
+            notify.notify(request.user, new_tweet, Notification.MENTION)
             create_streams(new_tweet, 'T')
             return redirect('profile', username=request.user.username)
     else:
@@ -134,7 +137,7 @@ def follow(request, username):
                 followed_user = visited_user,
             )
             follow.save()
-            create_notification(login_user, visited_user, Notification.FOLLOW, tweet=None)
+            notify.notify_follow(login_user, visited_user)
     return redirect('profile', username=username)
 
 @login_required

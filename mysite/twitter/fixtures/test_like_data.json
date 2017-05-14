@@ -1,0 +1,11 @@
+[
+{
+    "model": "twitter.like",
+    "pk": 1,
+    "fields": {
+        "tweet": 5,
+        "author": 1,
+        "like_date": "2017-05-04T22:17:46.209Z"
+    }
+}
+]

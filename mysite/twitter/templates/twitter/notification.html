@@ -4,35 +4,32 @@
 
 {% block main %}
   {% if notification_list %}
-    {% for notification in notification_list %}
+    {% for item in notification_list %}
+      
       <hr>
       <div>
-        <span>@{{notification.initiative_user.username}}</span>
+        <span>@{{item.notify_user.username}}</span>
         <span>・</span>
-        <span>{{notification.notificate_date|display_time}}</span>
+        <span>{{item.notify_date|display_time}}</span>
       </div>
-      <p>{{notification.subtitle}}</p>
+      <p>{{item.subtitle}}</p>
 
-      {% if notification.tweet %}
-        {% with notification.tweet as tweet %}
-          {% if notification.notificate_type == 'T' %}
-            <p>{{tweet.content}}</p>
-            {% include './tweet_icon.html' %}
-            {% include './reply.html' %}
-          {% else %}
-            <div class="notificated-tweet">
-              <div class="inner-notification">
-                {% if tweet.original_tweet %}
-                  <p>@{{tweet.original_tweet.author}}</p>
-                  <p>{{tweet.original_tweet.content}}</p>
-                {% else %}
-                  <p>@{{tweet.author}}</p>
+      {% if item.tweet %}
+        {% with tweet=item.tweet %}
+          {% if item.notified_type == 'M' or item.notified_type == 'Y' %}
+              {{tweet.content}}
+              {% include './tweet_icon.html' %}
+              {% include './reply.html' %}
+            {% else %}
+              <div class="notificated-tweet">
+                <div class="inner-notification">
+                  <span>@{{tweet.author.username}}</span>
                   <p>{{tweet.content}}</p>
-                {% endif %}
+                </div>
               </div>
-            </div>
-          {% endif %}
+            {% endif %}
         {% endwith %}
+        
       {% endif %}
       
     {% endfor %}

@@ -1,4 +1,5 @@
 from .pages import *
+from services import notify
 
 @login_required
 def retweet(request, tweet_id):
@@ -8,13 +9,15 @@ def retweet(request, tweet_id):
     original_tweet = get_original_tweet(tweet)
 
     if not Tweet.objects.filter(author=user, original_tweet=original_tweet):
-        
+
         original_tweet.retweet_num += 1
         original_tweet.save()
 
         new_tweet = create_tweet(user, original_tweet.content, original_tweet)
-        create_notification(user, tweet.author, Notification.RETWEET, new_tweet)
-        create_streams(new_tweet, Notification.RETWEET)
+
+        notify.notify(user, original_tweet, Notification.RETWEET)
+
+        create_streams(new_tweet, 'R')
 
     return redirect(request.META.get('HTTP_REFERER'))
 
@@ -51,10 +54,10 @@ def reply(request, tweet_id):
             )
             replyship.save()
 
-            tweet.reply_num += 1
-            tweet.save()
+            original_tweet.reply_num += 1
+            original_tweet.save()
 
-            create_notification(user, tweet.author, 'T', reply)
+            notify.notify_reply(reply, original_tweet)
 
             create_streams(reply, 'Y')
     else:
@@ -75,9 +78,7 @@ def like(request, tweet_id):
         original_tweet.like_num += 1
         original_tweet.save()
 
-        create_notification(user, tweet.author, Notification.LIKE, tweet)
-        usernames = search_username(tweet.content)
-        notificate_users(usernames, user, Notification.LIKE, tweet)
+        notify.notify(user, original_tweet, Notification.LIKE)
 
     return redirect(request.META.get('HTTP_REFERER'))
 
@@ -91,12 +92,6 @@ def unlike(request, tweet_id):
         like.delete()
         original_tweet.like_num -= 1
         original_tweet.save()
-
-        Notification.objects.filter(
-            initiative_user = user,
-            notificate_type = 'L',
-            tweet = tweet
-        ).delete()
 
     return redirect(request.META.get('HTTP_REFERER'))
 

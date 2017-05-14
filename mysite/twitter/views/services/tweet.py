@@ -4,18 +4,9 @@ def create_tweet(author, content, original_tweet):
     new_tweet = Tweet(
         author = author,
         content = content,
+        original_tweet = original_tweet,
     )
-    if original_tweet:
-        new_tweet.original_tweet = original_tweet
-
     new_tweet.save()
-
-
-    usernames = search_username(content)
-    if original_tweet:
-        notificate_users(usernames, author, Notification.RETWEET, new_tweet)
-    else:
-        notificate_users(usernames, author, Notification.METION, new_tweet)
     return new_tweet
 
 def get_original_tweet(tweet):
@@ -73,4 +64,3 @@ def get_show_likes(likes, login_user):
 
         show_tweets.append(tweet)
     return show_tweets
-

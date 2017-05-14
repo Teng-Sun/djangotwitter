@@ -84,7 +84,7 @@ class Notification(models.Model):
     LIKE_MENTION = 'LM'
     FOLLOW = 'F'
 
-    NOTIFICATION_TYPE = [
+    NOTIFY_TYPE = [
         (MENTION, 'mention'),
         (REPLY, 'reply'),
         (RETWEET, 'retweet'),
@@ -100,26 +100,32 @@ class Notification(models.Model):
         null=True,
         blank = True,
     )
-    initiative_user = models.ForeignKey(
+    notify_user = models.ForeignKey(
         User,
-        related_name='notificate_user',
+        related_name='notify_user',
         on_delete=models.CASCADE,
+        null=True,
+        blank = True,
     )
-    notificated_user = models.ForeignKey(
+    notified_user = models.ForeignKey(
         User,
-        related_name='notificated_user',
+        related_name='notified_user',
         on_delete=models.CASCADE,
+        null=True,
+        blank = True,
     )
-    notificate_type = models.CharField(
+    notified_type = models.CharField(
         max_length = 1,
-        choices = NOTIFICATION_TYPE,
-        default = REPLY
+        choices = NOTIFY_TYPE,
+        default = REPLY,
+        null=True,
+        blank = True,
     )
-    notificate_date = models.DateTimeField(
+    notify_date = models.DateTimeField(
         default = timezone.now
     )
     class Meta:
-        ordering = ['-notificate_date']
+        ordering = ['-notify_date']
 
 
 class Stream(models.Model):
