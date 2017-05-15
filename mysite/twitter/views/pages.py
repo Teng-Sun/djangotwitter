@@ -1,6 +1,6 @@
 from services.base import *
 
-from services import notify, stream
+from services import notify, stream, post
 
 
 def index(request):
@@ -9,7 +9,7 @@ def index(request):
     if user.is_authenticated():
         streams = Stream.objects.filter(receiver=user)
         for stream in streams:
-            get_tweet_data(stream.tweet, user, user)
+            post.get_action_data(stream.tweet, user)
         paginate_by = 10
         stream_list = pagination(request, streams, paginate_by)
     return render(request, 'twitter/index.html', {
@@ -23,7 +23,7 @@ def notification(request):
     for item in notifications:
         tweet = item.tweet
         if tweet:
-            get_tweet_data(tweet, user, user)
+            post.get_action_data(tweet, user)
         item.subtitle = notify.get_subtitle(item.notified_type)
 
     paginate_by = 10
@@ -57,11 +57,11 @@ def register(request):
 def profile(request, username):
     visited_user = set_profile_subnav_session(request, username)
     tweet_list = list(Tweet.objects.filter(author=visited_user))
-    show_tweets = get_show_tweets(tweet_list, visited_user, request.user)
+    tweets = post.show_tweets(tweet_list, visited_user, request.user)
 
     paginate_by = 10
 
-    tweets = pagination(request, show_tweets, paginate_by)
+    tweets = pagination(request, tweets, paginate_by)
     return render(request, 'twitter/profile.html', {
         'visited_user': visited_user,
         'tweets': tweets,
@@ -78,7 +78,7 @@ def post_tweet(request):
             tweet = form.save(commit=False)
             new_tweet = create_tweet(request.user, tweet.content, None)
             notify.notify(request.user, new_tweet, Notification.MENTION)
-            create_streams(new_tweet, Stream.TWEET)
+            stream.create_streams(new_tweet, Stream.TWEET)
             return redirect('profile', username=request.user.username)
     else:
         form = TweetForm()
@@ -112,9 +112,9 @@ def follower(request, username):
 def likes(request, username):
     visited_user = User.objects.get(username=username)
     likes = Like.objects.filter(author=visited_user) or []
-    show_likes = get_show_likes(likes, request.user)
+    like_tweets = post.show_like_tweets(likes, request.user)
     paginate_by = 10
-    like_list = pagination(request, show_likes, paginate_by)
+    like_list = pagination(request, like_tweets, paginate_by)
 
     return render(request, 'twitter/likes.html', {
         'visited_user': visited_user,

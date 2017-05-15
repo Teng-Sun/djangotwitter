@@ -42,5 +42,71 @@
         "reply_user": 1,
         "reply_date": "2017-05-04T22:10:01.209Z"
     }
+},
+{
+    "model": "twitter.replyship",
+    "pk": 5,
+    "fields": {
+        "tweet": 13,
+        "reply": 14,
+        "tweet_user": 1,
+        "reply_user": 1,
+        "reply_date": "2017-05-04T22:05:01.209Z"
+    }
+},
+{
+    "model": "twitter.replyship",
+    "pk": 6,
+    "fields": {
+        "tweet": 13,
+        "reply": 15,
+        "tweet_user": 1,
+        "reply_user": 2,
+        "reply_date": "2017-05-04T22:06:01.209Z"
+    }
+},
+{
+    "model": "twitter.replyship",
+    "pk": 7,
+    "fields": {
+        "tweet": 15,
+        "reply": 16,
+        "tweet_user": 2,
+        "reply_user": 3,
+        "reply_date": "2017-05-04T22:07:01.209Z"
+    }
+},
+{
+    "model": "twitter.replyship",
+    "pk": 8,
+    "fields": {
+        "tweet": 16,
+        "reply": 17,
+        "tweet_user": 3,
+        "reply_user": 1,
+        "reply_date": "2017-05-04T22:08:01.209Z"
+    }
+},
+{
+    "model": "twitter.replyship",
+    "pk": 9,
+    "fields": {
+        "tweet": 14,
+        "reply": 18,
+        "tweet_user": 3,
+        "reply_user": 1,
+        "reply_date": "2017-05-04T22:09:01.209Z"
+    }
+},
+{
+    "model": "twitter.replyship",
+    "pk": 10,
+    "fields": {
+        "tweet": 7,
+        "reply": 19,
+        "tweet_user": 1,
+        "reply_user": 2,
+        "reply_date": "2017-05-04T22:10:01.209Z"
+    }
 }
 ]

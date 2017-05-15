@@ -30,8 +30,7 @@ class NotifyTest(TestCase):
         self.reply_a_r_1_m_all = Tweet.objects.get(pk=9)
 
         self.retweet_a = Tweet.objects.get(pk=10)
-        self.retweet_a_re_a_m_all = Tweet.objects.get(pk=10)
-        self.retweet_a_re_1_m_all = Tweet.objects.get(pk=11)
+        self.retweet_a_re_1_m_all = Tweet.objects.get(pk=12)
 
 
     def test_search_username(self):

@@ -7,7 +7,7 @@
         "content": "admin",
         "created_date": "2017-05-04T22:01:01.209Z",
         "original_tweet": null,
-        "retweet_num": 2,
+        "retweet_num": 1,
         "like_num": 0,
         "reply_num": 2
     }
@@ -87,7 +87,7 @@
         "original_tweet": null,
         "retweet_num": 0,
         "like_num": 0,
-        "reply_num": 0
+        "reply_num": 1
     }
 },
 {
@@ -162,6 +162,84 @@
         "author": 1,
         "content": "REPLY: admin reply to user2",
         "created_date": "2017-05-04T22:13:01.209Z",
+        "original_tweet": null,
+        "retweet_num": 0,
+        "like_num": 0,
+        "reply_num": 3
+    }
+},
+{
+    "model": "twitter.tweet",
+    "pk": 14,
+    "fields": {
+        "author": 1,
+        "content": "REPLY-2: admin reply to <admin reply to user2> 14-13",
+        "created_date": "2017-05-04T22:14:01.209Z",
+        "original_tweet": null,
+        "retweet_num": 0,
+        "like_num": 0,
+        "reply_num": 0
+    }
+},
+{
+    "model": "twitter.tweet",
+    "pk": 15,
+    "fields": {
+        "author": 2,
+        "content": "REPLY-2: user1 reply to <admin reply to user2: 13> 15-13",
+        "created_date": "2017-05-04T22:15:01.209Z",
+        "original_tweet": null,
+        "retweet_num": 0,
+        "like_num": 0,
+        "reply_num": 1
+    }
+},
+{
+    "model": "twitter.tweet",
+    "pk": 16,
+    "fields": {
+        "author": 3,
+        "content": "REPLY-2: user2 reply to < user1 reply to <admin reply to user2: 13>> 16-15",
+        "created_date": "2017-05-04T22:16:01.209Z",
+        "original_tweet": null,
+        "retweet_num": 0,
+        "like_num": 0,
+        "reply_num": 1
+    }
+},
+{
+    "model": "twitter.tweet",
+    "pk": 17,
+    "fields": {
+        "author": 1,
+        "content": "REPLY-2: admin reply to <user2 reply to < user1 reply to <admin reply to user2: 13>>> 17-16",
+        "created_date": "2017-05-04T22:17:01.209Z",
+        "original_tweet": null,
+        "retweet_num": 0,
+        "like_num": 0,
+        "reply_num": 0
+    }
+},
+{
+    "model": "twitter.tweet",
+    "pk": 18,
+    "fields": {
+        "author": 3,
+        "content": "REPLY-2: user2 reply to <admin reply to <admin reply to user2>> 18-14",
+        "created_date": "2017-05-04T22:17:01.209Z",
+        "original_tweet": null,
+        "retweet_num": 0,
+        "like_num": 0,
+        "reply_num": 0
+    }
+},
+{
+    "model": "twitter.tweet",
+    "pk": 19,
+    "fields": {
+        "author": 2,
+        "content": "REPLY: user reply to <admin reply to admin> 19-7",
+        "created_date": "2017-05-04T22:19:01.209Z",
         "original_tweet": null,
         "retweet_num": 0,
         "like_num": 0,

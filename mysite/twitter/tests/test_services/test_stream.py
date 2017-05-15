@@ -25,7 +25,7 @@ class StreamTest(TestCase):
         self.reply_a_r_1 = Tweet.objects.get(pk=9)
         self.reply_a_r_2 = Tweet.objects.get(pk=13)
 
-        self.retweet_a_re_1 = Tweet.objects.get(pk=11)
+        self.retweet_a_re_1 = Tweet.objects.get(pk=12)
 
 
     def test_is_receiver(self):
