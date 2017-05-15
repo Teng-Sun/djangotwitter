@@ -154,5 +154,18 @@
         "like_num": 0,
         "reply_num": 0
     }
+},
+{
+    "model": "twitter.tweet",
+    "pk": 13,
+    "fields": {
+        "author": 1,
+        "content": "REPLY: admin reply to user2",
+        "created_date": "2017-05-04T22:13:01.209Z",
+        "original_tweet": null,
+        "retweet_num": 0,
+        "like_num": 0,
+        "reply_num": 0
+    }
 }
 ]

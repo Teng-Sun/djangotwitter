@@ -17,24 +17,25 @@ class StreamTest(TestCase):
         self.user1 = User.objects.get(username='user1')
         self.user2 = User.objects.get(username='user2')
 
-        self.tweet_from_admin = Tweet.objects.get(pk=1)
-        self.tweet_from_user1 = Tweet.objects.get(pk=2)
-        self.tweet_from_user2 = Tweet.objects.get(pk=3)
-        self.reply_from_admin_to_admin = Tweet.objects.get(pk=5)
-        self.reply_from_admin_to_user1 = Tweet.objects.get(pk=6)
-        self.reply_from_admin_to_user2 = Tweet.objects.get(pk=7)
-        self.reply_from_admin_to_user3 = Tweet.objects.get(pk=8)
-        self.retweet_from_admin_to_admin = Tweet.objects.get(pk=9)
+        self.tweet_a = Tweet.objects.get(pk=1)
+        self.tweet_1 = Tweet.objects.get(pk=2)
+        self.tweet_2 = Tweet.objects.get(pk=3)
+
+        self.reply_a_r_a = Tweet.objects.get(pk=7)
+        self.reply_a_r_1 = Tweet.objects.get(pk=9)
+        self.reply_a_r_2 = Tweet.objects.get(pk=13)
+
+        self.retweet_a_re_1 = Tweet.objects.get(pk=11)
+
 
     def test_is_receiver(self):
         data = [
-            (self.tweet_from_admin, [self.user1, self.user2], [True, True]),
-            (self.tweet_from_user1, [self.user2], [True]),
-            (self.reply_from_admin_to_admin, [self.user1, self.user2], [True, True]),
-            (self.reply_from_admin_to_user1, [self.user1, self.user2], [True, True]),
-            (self.reply_from_admin_to_user2, [self.user1, self.user2], [False, True]),
-            (self.reply_from_admin_to_user3, [self.user1, self.user2], [False, False]),
-            (self.retweet_from_admin_to_admin, [self.user1, self.user2], [True, True])
+            (self.tweet_a,[self.user1, self.user2], [True, True]),
+            (self.tweet_1, [self.user2], [True]),
+            (self.reply_a_r_a, [self.user1, self.user2], [True, True]),
+            (self.reply_a_r_1, [self.user1, self.user2], [True, True]),
+            (self.reply_a_r_2, [self.user1, self.user2], [False, True]),
+            (self.retweet_a_re_1, [self.user1, self.user2], [True, True])
         ]
 
         for tweet, followers, results in data:
@@ -44,14 +45,13 @@ class StreamTest(TestCase):
 
     def test_get_receivers(self):
         data = [
-            (self.tweet_from_admin, set([self.admin, self.user1, self.user2])),
-            (self.tweet_from_user1, set([self.user1, self.user2])),
-            (self.tweet_from_user2, set([self.user2])),
-            (self.reply_from_admin_to_admin, set([self.admin, self.user1, self.user2])),
-            (self.reply_from_admin_to_user1, set([self.admin, self.user1, self.user2])),
-            (self.reply_from_admin_to_user2, set([self.admin, self.user2])),
-            (self.reply_from_admin_to_user3, set([self.admin])),
-            (self.retweet_from_admin_to_admin, set([self.admin, self.user1, self.user2]))
+            (self.tweet_a, set([self.admin, self.user1, self.user2])),
+            (self.tweet_1, set([self.user1, self.user2])),
+            (self.tweet_2, set([self.user2])),
+            (self.reply_a_r_a, set([self.admin, self.user1, self.user2])),
+            (self.reply_a_r_1, set([self.admin, self.user1, self.user2])),
+            (self.reply_a_r_2, set([self.admin, self.user2])),
+            (self.retweet_a_re_1, set([self.admin, self.user1, self.user2]))
         ]
         for tweet, receivers_should_be in data:
             receivers = stream.get_receivers(tweet)
@@ -59,10 +59,9 @@ class StreamTest(TestCase):
 
     def test_create_streams(self):
         data = [
-            (self.tweet_from_admin, 'T'),
-            (self.reply_from_admin_to_admin, 'Y'),
-            (self.retweet_from_admin_to_admin, 'R')
-
+            (self.tweet_a, Stream.TWEET),
+            (self.reply_a_r_a, Stream.REPLY),
+            (self.retweet_a_re_1, Stream.RETWEET)
         ]
         for tweet, stream_type in data:
             stream.create_streams(tweet, stream_type)

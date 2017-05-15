@@ -129,11 +129,16 @@ class Notification(models.Model):
 
 
 class Stream(models.Model):
-    stream_type = (
-        ('T', 'tweet'),
-        ('Y', 'reply'),
-        ('R', 'retweet'),
-    )
+    TWEET = 'T'
+    REPLY = 'Y'
+    RETWEET = 'R'
+
+    STREAM_TYPE = [
+        (TWEET, 'tweet'),
+        (REPLY, 'reply'),
+        (RETWEET, 'retweet'),
+    ]
+
     receiver = models.ForeignKey(
         User,
         on_delete = models.CASCADE,
@@ -146,8 +151,8 @@ class Stream(models.Model):
     )
     stream_type = models.CharField(
         max_length = 1,
-        choices = stream_type,
-        default = 'T'
+        choices = STREAM_TYPE,
+        default = TWEET
     )
     stream_date = models.DateTimeField(default=timezone.now)
 

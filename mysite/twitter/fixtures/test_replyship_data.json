@@ -31,5 +31,16 @@
         "reply_user": 1,
         "reply_date": "2017-05-04T22:09:01.209Z"
     }
+},
+{
+    "model": "twitter.replyship",
+    "pk": 4,
+    "fields": {
+        "tweet": 3,
+        "reply": 13,
+        "tweet_user": 3,
+        "reply_user": 1,
+        "reply_date": "2017-05-04T22:10:01.209Z"
+    }
 }
 ]

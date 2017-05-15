@@ -1,5 +1,5 @@
 from .pages import *
-from services import notify
+from services import notify, stream
 
 @login_required
 def retweet(request, tweet_id):
@@ -17,7 +17,7 @@ def retweet(request, tweet_id):
 
         notify.notify(user, original_tweet, Notification.RETWEET)
 
-        create_streams(new_tweet, 'R')
+        create_streams(new_tweet, Stream.RETWEET)
 
     return redirect(request.META.get('HTTP_REFERER'))
 
@@ -59,7 +59,7 @@ def reply(request, tweet_id):
 
             notify.notify_reply(reply, original_tweet)
 
-            create_streams(reply, 'Y')
+            create_streams(reply, Stream.REPLY)
     else:
         reply_form = TweetForm()
     return redirect(request.META.get('HTTP_REFERER'))

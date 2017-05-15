@@ -1,6 +1,6 @@
 from services.base import *
 
-from services import notify
+from services import notify, stream
 
 
 def index(request):
@@ -78,7 +78,7 @@ def post_tweet(request):
             tweet = form.save(commit=False)
             new_tweet = create_tweet(request.user, tweet.content, None)
             notify.notify(request.user, new_tweet, Notification.MENTION)
-            create_streams(new_tweet, 'T')
+            create_streams(new_tweet, Stream.TWEET)
             return redirect('profile', username=request.user.username)
     else:
         form = TweetForm()

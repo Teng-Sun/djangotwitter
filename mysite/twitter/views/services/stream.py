@@ -1,6 +1,7 @@
 from .share import *
 
-def cretae_stream(receiver, tweet, stream_type):
+# save to db
+def create_stream(receiver, tweet, stream_type):
     stream = Stream(
         receiver = receiver,
         tweet = tweet,
@@ -8,6 +9,7 @@ def cretae_stream(receiver, tweet, stream_type):
     )
     stream.save()
 
+# if user should be stream receiver
 def is_receiver(tweet, follower):
     author = tweet.author
     replyship = Replyship.objects.filter(reply=tweet)
@@ -18,6 +20,7 @@ def is_receiver(tweet, follower):
         follower_follows_replied_user = check_followship(follower, replied_user)
         return replied_user==follower or follower_follows_replied_user
 
+# get a tweet's receivers
 def get_receivers(tweet):
     author = tweet.author
     receivers = set([author])
@@ -28,7 +31,8 @@ def get_receivers(tweet):
             receivers.add(follower)
     return receivers
 
+# create a tweet's streams
 def create_streams(tweet, stream_type):
     receivers = get_receivers(tweet)
     for receiver in receivers:
-        cretae_stream(receiver, tweet, stream_type)
+        create_stream(receiver, tweet, stream_type)
