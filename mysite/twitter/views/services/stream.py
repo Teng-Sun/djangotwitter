@@ -1,4 +1,5 @@
 from .share import *
+from .profile_nav import check_followship
 
 # save to db
 def create_stream(receiver, tweet, stream_type):

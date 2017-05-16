@@ -1,6 +1,6 @@
 from services.base import *
 
-from services import notify, stream, post
+from services import notify, stream, post, profile_nav
 
 
 def index(request):
@@ -55,7 +55,10 @@ def register(request):
 
 
 def profile(request, username):
-    visited_user = set_profile_subnav_session(request, username)
+    login_user = request.user
+    visited_user = User.objects.get(username=username)
+    
+    profile_nav.subnav_sessions(request, login_user, visited_user)
     tweet_list = list(Tweet.objects.filter(author=visited_user))
     tweets = post.show_tweets(tweet_list, visited_user, request.user)
 

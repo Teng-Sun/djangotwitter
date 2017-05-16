@@ -9,12 +9,6 @@ from twitter.models import Tweet, Replyship, Followship, Like, Notification, Str
 from twitter.forms import TweetForm, RegistrationForm
 
 
-def check_followship(initiative_user, followed_user):
-    return bool(Followship.objects.filter(
-        initiative_user=initiative_user,
-        followed_user=followed_user
-    ))
-    
 def pagination(request, objcet_list, paginate_by):
     paginator = Paginator(objcet_list, paginate_by)
     page = request.GET.get('page', 1)
