@@ -26,31 +26,12 @@ def following(request, username):
     return render(request, 'twitter/following.html', render_data)
 
 def follower(request, username):
-    visited_user = User.objects.get(username=username)
-    follower_list = Followship.objects.filter(followed_user=visited_user)
-    paginate_by = 10
-    followers, show_pagination = share.pagination(request, follower_list, paginate_by)
-    return render(request, 'twitter/follower.html', {
-        'visited_user': visited_user,
-        'followers': followers,
-        'object_list': followers,
-        'show_pagination': show_pagination,
-    })
+    render_data = page.follower(request, username)
+    return render(request, 'twitter/follower.html', render_data)
 
-@login_required
 def likes(request, username):
-    visited_user = User.objects.get(username=username)
-    likes = Like.objects.filter(author=visited_user) or []
-    like_tweets = post.show_like_tweets(likes, request.user)
-    paginate_by = 10
-    like_list, show_pagination = share.pagination(request, like_tweets, paginate_by)
-
-    return render(request, 'twitter/likes.html', {
-        'visited_user': visited_user,
-        'tweets': like_list,
-        'object_list': like_list,
-        'show_pagination': show_pagination,
-    })
+    render_data = page.likes(request, username)
+    return render(request, 'twitter/likes.html', render_data)
 
 def register(request):
     if request.method == 'POST':

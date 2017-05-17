@@ -1,6 +1,6 @@
 from django.contrib.auth.models import User
 from django.shortcuts import get_object_or_404
-from twitter.models import Tweet, Stream, Followship
+from twitter.models import Tweet, Stream, Followship, Like
 from . import post, share, profile_nav
 
 
@@ -62,5 +62,31 @@ def following(request, username):
         'visited_user': visited_user,
         'followings': followings,
         'object_list': followings,
+        'show_pagination': show_pagination,
+    }
+
+def follower(request, username):
+    visited_user = get_object_or_404(User, username=username)
+    follower_list = Followship.objects.filter(followed_user=visited_user)
+    paginate_by = 10
+    followers, show_pagination = share.pagination(request, follower_list, paginate_by)
+    return {
+        'visited_user': visited_user,
+        'followers': followers,
+        'object_list': followers,
+        'show_pagination': show_pagination,
+    }
+
+def likes(request, username):
+    login_user = request.user
+    visited_user = get_object_or_404(User, username=username)
+    likes = Like.objects.filter(author=visited_user)
+    like_tweets = post.show_like_tweets(likes, login_user)
+    paginate_by = 10
+    like_tweets_list, show_pagination = share.pagination(request, like_tweets, paginate_by)
+    return {
+        'visited_user': visited_user,
+        'tweets': like_tweets_list,
+        'object_list': like_tweets_list,
         'show_pagination': show_pagination,
     }
