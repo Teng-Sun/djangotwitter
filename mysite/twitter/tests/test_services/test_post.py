@@ -93,14 +93,3 @@ class TweetTest(TestCase):
         ]
         for t, user, result in data:
             self.assertEqual(tweet.been_liked(t, user), result)
-        
-    def test_filter_tweet(self):
-        tweet_list = [self.tweet_a, self.a_re_a, self.tweet_2]
-        data = [
-            (self.tweet_a, self.admin, [self.a_re_a, self.tweet_2]),
-            (self.tweet_a, self.user1, [self.tweet_a, self.a_re_a, self.tweet_2]),
-        ]
-        for t, user, result in data:
-            tweets = deepcopy(tweet_list)
-            tweet.filter_tweet(t, user, tweets)
-            self.assertEqual(tweets, result)

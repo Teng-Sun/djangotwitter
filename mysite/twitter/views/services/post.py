@@ -24,10 +24,11 @@ def get_action_data(tweet, user):
     get_tweet_replies(tweet, tweet.replies_list)
 
 def show_tweets(tweet_list, visited_user, login_user):
-    tweets = deepcopy(tweet_list)
+    tweets = []
     for tweet in tweet_list:
         get_action_data(tweet, login_user)
-        filter_tweet(tweet, visited_user, tweets)
+        if not been_retweeted(tweet, visited_user):
+            tweets.append(tweet)
     return tweets
 
 def show_like_tweets(likes, user):
@@ -62,7 +63,3 @@ def been_retweeted(tweet, user):
 
 def been_liked(tweet, user):
     return bool(Like.objects.filter(tweet=tweet, author=user))
-
-def filter_tweet(tweet, user, tweets):
-    if been_retweeted(tweet, user):
-        tweets.remove(tweet)
