@@ -1,6 +1,7 @@
 from django.contrib.auth.models import User
-from twitter.models import Stream
-from . import post, share
+from django.shortcuts import get_object_or_404
+from twitter.models import Tweet, Stream, Followship
+from . import post, share, profile_nav
 
 
 def index(request):
@@ -31,5 +32,24 @@ def notificaiton(request):
     paginate_by = 10
     notification_list, show_pagination = share.pagination(request, notifications, paginate_by)
     return {
-    
+        'notification_list': notification_list,
+        'object_list': notification_list,
+        'show_pagination': show_pagination,
     }
+
+def profile(request, username):
+    login_user = request.user
+    visited_user = get_object_or_404(User, username=username)
+    profile_nav.subnav_sessions(request, login_user, visited_user)
+    tweet_list = list(Tweet.objects.filter(author=visited_user))
+
+    tweets = post.show_tweets(tweet_list, visited_user, request.user)
+    paginate_by = 10
+    tweets, show_pagination = share.pagination(request, tweets, paginate_by)
+    return {
+        'visited_user': visited_user,
+        'tweets': tweets,
+        'object_list': tweets,
+        'show_pagination': show_pagination,
+    }
+

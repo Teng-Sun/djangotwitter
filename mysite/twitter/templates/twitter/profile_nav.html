@@ -1,18 +1,20 @@
-{% if request.user.username != visited_user.username %}
-  {% if request.session.login_follow_visited %}
-    <a href="{% url 'unfollow' visited_user.username %}">
-      <button class="btn button-right button-unfollow">
-          <span class="glyphicon glyphicon-minus"></span>
-          Unfollow
-        </button>
-    </a>
-  {% else %}
-    <a href="{% url 'follow' visited_user.username %}">
-      <button class="btn button-base-color button-right">
-          <span class="glyphicon glyphicon-plus"></span>
-          Follow
-        </button>
-    </a>
+{% if request.user.is_authenticated %}
+  {% if request.user.username != visited_user.username %}
+    {% if request.session.login_follow_visited %}
+      <a href="{% url 'unfollow' visited_user.username %}">
+        <button class="btn button-right button-unfollow">
+            <span class="glyphicon glyphicon-minus"></span>
+            Unfollow
+          </button>
+      </a>
+    {% else %}
+      <a href="{% url 'follow' visited_user.username %}">
+        <button class="btn button-base-color button-right">
+            <span class="glyphicon glyphicon-plus"></span>
+            Follow
+          </button>
+      </a>
+    {% endif %}
   {% endif %}
 {% endif %}
 <div>

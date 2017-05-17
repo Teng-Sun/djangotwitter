@@ -18,20 +18,8 @@ def notification(request):
     return render(request, 'twitter/notification.html', render_data)
 
 def profile(request, username):
-    login_user = request.user
-    visited_user = User.objects.get(username=username)
-    
-    profile_nav.subnav_sessions(request, login_user, visited_user)
-    tweet_list = list(Tweet.objects.filter(author=visited_user))
-    tweets = post.show_tweets(tweet_list, visited_user, request.user)
-    paginate_by = 10
-    tweets, show_pagination = share.pagination(request, tweets, paginate_by)
-    return render(request, 'twitter/profile.html', {
-        'visited_user': visited_user,
-        'tweets': tweets,
-        'object_list': tweets,
-        'show_pagination': show_pagination,
-    })
+    render_data = page.profile(request, username)
+    return render(request, 'twitter/profile.html', render_data)
 
 def following(request, username):
     visited_user = User.objects.get(username=username)
