@@ -1,7 +1,7 @@
 from django.contrib.auth.models import User
 from django.shortcuts import get_object_or_404
-from twitter.models import Tweet, Stream, Followship, Like
-from . import post, share, profile_nav
+from twitter.models import Tweet, Stream, Followship, Like, Notification
+from . import post, share, notify, profile_nav
 
 
 def index(request):
@@ -20,7 +20,7 @@ def index(request):
         'show_pagination': show_pagination,
     }
 
-def notificaiton(request):
+def notification(request):
     user = request.user
     show_pagination = False
     notifications = Notification.objects.filter(notified_user=user)
