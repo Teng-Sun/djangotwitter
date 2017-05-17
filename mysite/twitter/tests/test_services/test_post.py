@@ -1,11 +1,10 @@
 from django.contrib.auth.models import User
 from django.test import TestCase
-from copy import deepcopy
 
 from twitter.models import Tweet
-from twitter.views.services import tweet
+from twitter.views.services import post
 
-class TweetTest(TestCase):
+class PostTest(TestCase):
     fixtures = [
         'twitter/fixtures/test_user_data.json',
         'twitter/fixtures/test_tweet_data.json',
@@ -42,7 +41,7 @@ class TweetTest(TestCase):
             (self.retweet_a_re_1, self.tweet_1_m_all)
         ]
         for t, original in data:
-            self.assertEqual(tweet.get_original(t), original)
+            self.assertEqual(post.get_original(t), original)
 
     def test_get_reply_replies(self):
         data = [
@@ -56,7 +55,7 @@ class TweetTest(TestCase):
         for reply, result in data:
             reply_list = []
             reply_ids = set([])
-            tweet.get_reply_replies(reply, reply_list)
+            post.get_reply_replies(reply, reply_list)
             for reply_item in reply_list:
                 reply_ids.add(reply_item.id)
             self.assertEqual(reply_ids, result)
@@ -71,7 +70,7 @@ class TweetTest(TestCase):
         for t, result in data:
             replies_list = []
             replies_ids = []
-            tweet.get_tweet_replies(t, replies_list)
+            post.get_tweet_replies(t, replies_list)
             for index, reply_list in enumerate(replies_list):
                 replies_ids.append([])
                 for item in reply_list:
@@ -84,7 +83,7 @@ class TweetTest(TestCase):
             (self.tweet_a, self.user1, False),
         ]
         for t, user, result in data:
-            self.assertEqual(tweet.been_retweeted(t, user), result)
+            self.assertEqual(post.been_retweeted(t, user), result)
             
     def test_been_liked(self):
         data = [
@@ -92,4 +91,4 @@ class TweetTest(TestCase):
             (self.a_like_a, self.user1, False),
         ]
         for t, user, result in data:
-            self.assertEqual(tweet.been_liked(t, user), result)
+            self.assertEqual(post.been_liked(t, user), result)
