@@ -6,22 +6,12 @@ from twitter.models import Tweet, Followship, Like, Notification, Stream
 from twitter.forms import TweetForm, RegistrationForm
 from services import share, notify, stream, post, profile_nav
 
+from services import page
+
 
 def index(request):
-    user = request.user
-    stream_list = []
-    show_pagination = False
-    if user.is_authenticated():
-        streams = Stream.objects.filter(receiver=user)
-        for s in streams:
-            post.get_action_data(s.tweet, user)
-        paginate_by = 10
-        stream_list, show_pagination = share.pagination(request, streams, paginate_by)
-    return render(request, 'twitter/index.html', {
-        'stream_list': stream_list,
-        'object_list': stream_list,
-        'show_pagination': show_pagination,
-    })
+    render_data = page.index(request)
+    return render(request, 'twitter/index.html', render_data)
 
 def notification(request):
     user = request.user
@@ -55,6 +45,45 @@ def profile(request, username):
         'visited_user': visited_user,
         'tweets': tweets,
         'object_list': tweets,
+        'show_pagination': show_pagination,
+    })
+
+def following(request, username):
+    visited_user = User.objects.get(username=username)
+    following_list = Followship.objects.filter(initiative_user=visited_user)
+    paginate_by = 10
+    followings, show_pagination = share.pagination(request, following_list, paginate_by)
+    return render(request, 'twitter/following.html', {
+        'visited_user': visited_user,
+        'followings': followings,
+        'object_list': followings,
+        'show_pagination': show_pagination,
+    })
+
+def follower(request, username):
+    visited_user = User.objects.get(username=username)
+    follower_list = Followship.objects.filter(followed_user=visited_user)
+    paginate_by = 10
+    followers, show_pagination = share.pagination(request, follower_list, paginate_by)
+    return render(request, 'twitter/follower.html', {
+        'visited_user': visited_user,
+        'followers': followers,
+        'object_list': followers,
+        'show_pagination': show_pagination,
+    })
+
+@login_required
+def likes(request, username):
+    visited_user = User.objects.get(username=username)
+    likes = Like.objects.filter(author=visited_user) or []
+    like_tweets = post.show_like_tweets(likes, request.user)
+    paginate_by = 10
+    like_list, show_pagination = share.pagination(request, like_tweets, paginate_by)
+
+    return render(request, 'twitter/likes.html', {
+        'visited_user': visited_user,
+        'tweets': like_list,
+        'object_list': like_list,
         'show_pagination': show_pagination,
     })
 
@@ -97,44 +126,9 @@ def post_tweet(request):
         'form': form,
     })
 
-def following(request, username):
-    visited_user = User.objects.get(username=username)
-    following_list = Followship.objects.filter(initiative_user=visited_user)
-    paginate_by = 10
-    followings, show_pagination = share.pagination(request, following_list, paginate_by)
-    return render(request, 'twitter/following.html', {
-        'visited_user': visited_user,
-        'followings': followings,
-        'object_list': followings,
-        'show_pagination': show_pagination,
-    })
 
-def follower(request, username):
-    visited_user = User.objects.get(username=username)
-    follower_list = Followship.objects.filter(followed_user=visited_user)
-    paginate_by = 10
-    followers, show_pagination = share.pagination(request, follower_list, paginate_by)
-    return render(request, 'twitter/follower.html', {
-        'visited_user': visited_user,
-        'followers': followers,
-        'object_list': followers,
-        'show_pagination': show_pagination,
-    })
 
-@login_required
-def likes(request, username):
-    visited_user = User.objects.get(username=username)
-    likes = Like.objects.filter(author=visited_user) or []
-    like_tweets = post.show_like_tweets(likes, request.user)
-    paginate_by = 10
-    like_list, show_pagination = share.pagination(request, like_tweets, paginate_by)
 
-    return render(request, 'twitter/likes.html', {
-        'visited_user': visited_user,
-        'tweets': like_list,
-        'object_list': like_list,
-        'show_pagination': show_pagination,
-    })
 
 
 
