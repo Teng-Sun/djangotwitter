@@ -14,23 +14,8 @@ def index(request):
     return render(request, 'twitter/index.html', render_data)
 
 def notification(request):
-    user = request.user
-    notifications = Notification.objects.filter(notified_user=user)
-    show_pagination = False
-    for n in notifications:
-        n.subtitle = notify.get_subtitle(n.notified_type)
-        tweet = n.tweet
-        if tweet:
-            post.get_action_data(tweet, user)
-
-    paginate_by = 10
-    notification_list, show_pagination = share.pagination(request, notifications, paginate_by)
-
-    return render(request, 'twitter/notification.html', {
-        'notification_list': notification_list,
-        'object_list': notification_list,
-        'show_pagination': show_pagination,
-    })
+    render_data = page.notification(request)
+    return render(request, 'twitter/notification.html', render_data)
 
 def profile(request, username):
     login_user = request.user
