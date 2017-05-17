@@ -53,3 +53,14 @@ def profile(request, username):
         'show_pagination': show_pagination,
     }
 
+def following(request, username):
+    visited_user = get_object_or_404(User, username=username)
+    following_list = Followship.objects.filter(initiative_user=visited_user)
+    paginate_by = 10
+    followings, show_pagination = share.pagination(request, following_list, paginate_by)
+    return {
+        'visited_user': visited_user,
+        'followings': followings,
+        'object_list': followings,
+        'show_pagination': show_pagination,
+    }
