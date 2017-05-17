@@ -1,6 +1,6 @@
 from services.base import *
 
-from services import notify, stream, post, profile_nav
+from services import share, notify, stream, post, profile_nav
 
 
 def index(request):
@@ -8,13 +8,14 @@ def index(request):
     stream_list = []
     if user.is_authenticated():
         streams = Stream.objects.filter(receiver=user)
-        for stream in streams:
-            post.get_action_data(stream.tweet, user)
+        for s in streams:
+            post.get_action_data(s.tweet, user)
         paginate_by = 10
-        stream_list = pagination(request, streams, paginate_by)
+        stream_list, show_pagination = share.pagination(request, streams, paginate_by)
     return render(request, 'twitter/index.html', {
         'stream_list': stream_list,
         'object_list': stream_list,
+        'show_pagination': show_pagination,
     })
 
 def notification(request):
@@ -27,11 +28,12 @@ def notification(request):
         item.subtitle = notify.get_subtitle(item.notified_type)
 
     paginate_by = 10
-    notification_list = pagination(request, notifications, paginate_by)
+    notification_list, show_pagination = share.pagination(request, notifications, paginate_by)
 
     return render(request, 'twitter/notification.html', {
         'notification_list': notification_list,
         'object_list': notification_list,
+        'show_pagination': show_pagination,
     })
 
 def register(request):
@@ -64,11 +66,12 @@ def profile(request, username):
 
     paginate_by = 10
 
-    tweets = pagination(request, tweets, paginate_by)
+    tweets, show_pagination = share.pagination(request, tweets, paginate_by)
     return render(request, 'twitter/profile.html', {
         'visited_user': visited_user,
         'tweets': tweets,
         'object_list': tweets,
+        'show_pagination': show_pagination,
     })
 
 
@@ -93,22 +96,24 @@ def following(request, username):
     visited_user = User.objects.get(username=username)
     following_list = Followship.objects.filter(initiative_user=visited_user)
     paginate_by = 10
-    followings = pagination(request, following_list, paginate_by)
+    followings, show_pagination = share.pagination(request, following_list, paginate_by)
     return render(request, 'twitter/following.html', {
         'visited_user': visited_user,
         'followings': followings,
         'object_list': followings,
+        'show_pagination': show_pagination,
     })
 
 def follower(request, username):
     visited_user = User.objects.get(username=username)
     follower_list = Followship.objects.filter(followed_user=visited_user)
     paginate_by = 10
-    followers = pagination(request, follower_list, paginate_by)
+    followers, show_pagination = share.pagination(request, follower_list, paginate_by)
     return render(request, 'twitter/follower.html', {
         'visited_user': visited_user,
         'followers': followers,
         'object_list': followers,
+        'show_pagination': show_pagination,
     })
 
 @login_required
@@ -117,12 +122,13 @@ def likes(request, username):
     likes = Like.objects.filter(author=visited_user) or []
     like_tweets = post.show_like_tweets(likes, request.user)
     paginate_by = 10
-    like_list = pagination(request, like_tweets, paginate_by)
+    like_list, show_pagination = share.pagination(request, like_tweets, paginate_by)
 
     return render(request, 'twitter/likes.html', {
         'visited_user': visited_user,
         'tweets': like_list,
         'object_list': like_list,
+        'show_pagination': show_pagination,
     })
 
 
@@ -167,7 +173,8 @@ def explore(request):
             if user.tweet_set.all():
                 tweet_list.append(user.tweet_set.all()[0])
     paginate_by = 10
-    tweets = pagination(request, tweet_list, paginate_by)
+    tweets, show_pagination = share.pagination(request, tweet_list, paginate_by)
     return render(request, 'twitter/explore.html', {
         'tweets': tweets,
+        'show_pagination': show_pagination,
     })

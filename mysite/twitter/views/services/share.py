@@ -9,13 +9,17 @@ from twitter.models import Tweet, Replyship, Followship, Like, Notification, Str
 from twitter.forms import TweetForm, RegistrationForm
 
 
-def pagination(request, objcet_list, paginate_by):
-    paginator = Paginator(objcet_list, paginate_by)
+def pagination(request, object_list, paginate_by):
+    paginator = Paginator(object_list, paginate_by)
     page = request.GET.get('page', 1)
     try:
-        result = paginator.page(page)
+        text = paginator.page(page)
     except PageNotAnInteger:
-        result = paginator.page(1)
+        text = paginator.page(1)
     except EmptyPage:
-        result = paginator.page(paginator.num_pages)
-    return result
+        text = paginator.page(paginator.num_pages)
+    if paginator.num_pages == 1:
+        show_pagination = False
+    else:
+        show_pagination = True
+    return text, show_pagination
