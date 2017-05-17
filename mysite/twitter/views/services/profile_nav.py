@@ -2,7 +2,12 @@ from django.contrib.auth.models import User
 from twitter.models import Tweet, Followship, Like
 
 def subnav_sessions(request, login_user, visited_user):
-    login_follow_visited = check_followship(login_user, visited_user)
+    
+    if login_user.is_authenticated():
+        login_follow_visited = check_followship(login_user, visited_user)
+    else:
+        login_follow_visited = False
+    
     tweet, following, follower, like = get_subnav_data(visited_user)
     subnav_data = [
         ('tweet_num', tweet),
