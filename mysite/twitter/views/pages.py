@@ -1,11 +1,16 @@
-from services.base import *
+from django.contrib.auth.models import User
+from django.contrib.auth.decorators import login_required
+from django.shortcuts import render, redirect
 
+from twitter.models import Tweet, Followship, Like, Notification, Stream
+from twitter.forms import TweetForm, RegistrationForm
 from services import share, notify, stream, post, profile_nav
 
 
 def index(request):
     user = request.user
     stream_list = []
+    show_pagination = False
     if user.is_authenticated():
         streams = Stream.objects.filter(receiver=user)
         for s in streams:
@@ -21,11 +26,12 @@ def index(request):
 def notification(request):
     user = request.user
     notifications = Notification.objects.filter(notified_user=user)
-    for item in notifications:
-        tweet = item.tweet
+    show_pagination = False
+    for n in notifications:
+        n.subtitle = notify.get_subtitle(n.notified_type)
+        tweet = n.tweet
         if tweet:
             post.get_action_data(tweet, user)
-        item.subtitle = notify.get_subtitle(item.notified_type)
 
     paginate_by = 10
     notification_list, show_pagination = share.pagination(request, notifications, paginate_by)
@@ -33,6 +39,22 @@ def notification(request):
     return render(request, 'twitter/notification.html', {
         'notification_list': notification_list,
         'object_list': notification_list,
+        'show_pagination': show_pagination,
+    })
+
+def profile(request, username):
+    login_user = request.user
+    visited_user = User.objects.get(username=username)
+    
+    profile_nav.subnav_sessions(request, login_user, visited_user)
+    tweet_list = list(Tweet.objects.filter(author=visited_user))
+    tweets = post.show_tweets(tweet_list, visited_user, request.user)
+    paginate_by = 10
+    tweets, show_pagination = share.pagination(request, tweets, paginate_by)
+    return render(request, 'twitter/profile.html', {
+        'visited_user': visited_user,
+        'tweets': tweets,
+        'object_list': tweets,
         'show_pagination': show_pagination,
     })
 
@@ -56,23 +78,6 @@ def register(request):
     })
 
 
-def profile(request, username):
-    login_user = request.user
-    visited_user = User.objects.get(username=username)
-    
-    profile_nav.subnav_sessions(request, login_user, visited_user)
-    tweet_list = list(Tweet.objects.filter(author=visited_user))
-    tweets = post.show_tweets(tweet_list, visited_user, request.user)
-
-    paginate_by = 10
-
-    tweets, show_pagination = share.pagination(request, tweets, paginate_by)
-    return render(request, 'twitter/profile.html', {
-        'visited_user': visited_user,
-        'tweets': tweets,
-        'object_list': tweets,
-        'show_pagination': show_pagination,
-    })
 
 
 
@@ -82,7 +87,7 @@ def post_tweet(request):
         form = TweetForm(request.POST)
         if form.is_valid():
             tweet = form.save(commit=False)
-            new_tweet = create_tweet(request.user, tweet.content, None)
+            new_tweet = post.create_tweet(request.user, tweet.content, None)
             notify.notify(request.user, new_tweet, Notification.MENTION)
             stream.create_streams(new_tweet, Stream.TWEET)
             return redirect('profile', username=request.user.username)

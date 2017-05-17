@@ -1,4 +1,4 @@
-from .share import *
+from twitter.models import Tweet, Replyship, Like
 from copy import deepcopy
 
 def create_tweet(author, content, original_tweet):

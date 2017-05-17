@@ -1,4 +1,7 @@
-from .share import *
+from django.contrib.auth.models import User
+import re
+
+from twitter.models import Notification
 
 # save to db
 def create_notification(tweet, notify_user, notified_user, notified_type):

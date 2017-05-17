@@ -1,19 +1,25 @@
-from .pages import *
-from services import notify, stream
+from django.contrib.auth.models import User
+from django.contrib.auth.decorators import login_required
+from django.shortcuts import redirect
+
+from twitter.models import Tweet, Replyship, Like, Notification, Stream
+from twitter.forms import TweetForm
+from services import notify, stream, post
 
 @login_required
 def retweet(request, tweet_id):
     tweet = Tweet.objects.get(pk=tweet_id)
     user = request.user
 
-    original_tweet = get_original(tweet)
+    original_tweet = post.get_original(tweet)
 
     if not Tweet.objects.filter(author=user, original_tweet=original_tweet):
 
         original_tweet.retweet_num += 1
         original_tweet.save()
+        print original_tweet.retweet_num
 
-        new_tweet = create_tweet(user, original_tweet.content, original_tweet)
+        new_tweet = post.create_tweet(user, original_tweet.content, original_tweet)
 
         notify.notify(user, original_tweet, Notification.RETWEET)
 
@@ -26,7 +32,7 @@ def unretweet(request, tweet_id):
     tweet = Tweet.objects.get(pk=tweet_id)
     user = request.user
 
-    original_tweet = get_original(tweet)
+    original_tweet = post.get_original(tweet)
 
     if Tweet.objects.filter(author=user, original_tweet=original_tweet):
         original_tweet.retweet_num -= 1
@@ -39,13 +45,13 @@ def unretweet(request, tweet_id):
 def reply(request, tweet_id):
     tweet = Tweet.objects.get(pk=tweet_id)
     user = request.user
-    original_tweet = get_original(tweet)
+    original_tweet = post.get_original(tweet)
     if request.method == 'POST':
         reply_form = TweetForm(request.POST)
         if reply_form.is_valid():
             new_reply = reply_form.save(commit=False)
 
-            reply = create_tweet(user, new_reply.content, original_tweet=None)
+            reply = post.create_tweet(user, new_reply.content, original_tweet=None)
             replyship = Replyship(
                 tweet = original_tweet,
                 reply = reply,
@@ -67,7 +73,7 @@ def reply(request, tweet_id):
 @login_required
 def like(request, tweet_id):
     tweet = Tweet.objects.get(pk=tweet_id)
-    original_tweet = get_original(tweet)
+    original_tweet = post.get_original(tweet)
     user = request.user
     if not Like.objects.filter(tweet=original_tweet, author=user):
         new_like = Like(
@@ -79,13 +85,12 @@ def like(request, tweet_id):
         original_tweet.save()
 
         notify.notify(user, original_tweet, Notification.LIKE)
-
     return redirect(request.META.get('HTTP_REFERER'))
 
 @login_required
 def unlike(request, tweet_id):
     tweet = Tweet.objects.get(pk=tweet_id)
-    original_tweet = get_original(tweet)
+    original_tweet = post.get_original(tweet)
     user = request.user
     like = Like.objects.get(tweet=original_tweet, author=user)
     if like:
@@ -99,7 +104,7 @@ def unlike(request, tweet_id):
 def delete(request, tweet_id):
     tweet = Tweet.objects.get(pk=tweet_id)
     if tweet and tweet.author == request.user:
-        original_tweet = get_original(tweet)
+        original_tweet = post.get_original(tweet)
         replyship = Replyship.objects.filter(reply=original_tweet)
         if replyship:
             replyship[0].tweet.reply_num -= 1

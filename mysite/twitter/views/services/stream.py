@@ -1,4 +1,6 @@
-from .share import *
+from django.contrib.auth.models import User
+from twitter.models import Replyship, Followship, Stream
+
 from .profile_nav import check_followship
 
 # save to db

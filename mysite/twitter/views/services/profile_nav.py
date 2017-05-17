@@ -1,11 +1,5 @@
-from .share import *
-from django.contrib.sessions.backends.db import SessionStore
-from django.contrib.sessions.models import Session
-
-# def subnav_sessions(login_user, visited_user):
-#     session_key = set_profile_subnav_sessions(login_user, visited_user)
-#     sessions = SessionStore(session_key=session_key)
-#     return sessions
+from django.contrib.auth.models import User
+from twitter.models import Tweet, Followship, Like
 
 def subnav_sessions(request, login_user, visited_user):
     login_follow_visited = check_followship(login_user, visited_user)
