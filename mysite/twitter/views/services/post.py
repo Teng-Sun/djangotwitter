@@ -18,7 +18,7 @@ def get_action_data(tweet, user):
     tweet.reply_num = original_tweet.reply_num
 
     tweet.replies_list = []
-    get_tweet_replies(tweet, tweet.replies_list)
+    get_tweet_replies(original_tweet, tweet.replies_list)
     if user.is_authenticated():
         tweet.has_been_liked = been_liked(original_tweet, user)
         tweet.has_been_retweeded = been_retweeted(original_tweet, user)
