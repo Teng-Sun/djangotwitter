@@ -1,20 +1,23 @@
 from django.conf.urls import url
 from . import views
-from twitter.views import pages
-from twitter.views import tweets
+from twitter.views import pages, tweets, users
 
 urlpatterns = [
     url(r'^$', pages.index, name='index'),
-    url(r'^tweet/$', pages.post_tweet, name='post_tweet'),
+    url(r'^notification/$', pages.notification, name='notification'),
     url(r'^profile/(?P<username>\w+)/$', pages.profile, name='profile'),
-    url(r'^accounts/register/$', pages.register, name='register'),
-    url(r'^explore/$', pages.explore, name='explore'),
+    url(r'^tweet/$', pages.post_tweet, name='post_tweet'),
     url(r'^follower/(?P<username>\w+)/$', pages.follower, name="follower"),
     url(r'^following/(?P<username>\w+)/$', pages.following, name="following"),
     url(r'^likes/(?P<username>\w+)/$', pages.likes, name='likes'),
-    url(r'^follow/(?P<username>\w+)/$', pages.follow, name="follow"),
-    url(r'^unfollow/(?P<username>\w+)/$', pages.unfollow, name="unfollow"),
-    url(r'^notification/$', pages.notification, name='notification'),
+    
+    
+    url(r'^explore/$', pages.explore, name='explore'),
+
+    url(r'^accounts/register/$', users.register, name='register'),
+    url(r'^follow/(?P<username>\w+)/$', users.follow, name="follow"),
+    url(r'^unfollow/(?P<username>\w+)/$', users.unfollow, name="unfollow"),
+    
 
     url(r'^reply/(?P<tweet_id>\w+)/$', tweets.reply, name="reply"),
     url(r'^retweet/(?P<tweet_id>\w+)$', tweets.retweet, name="retweet"),
