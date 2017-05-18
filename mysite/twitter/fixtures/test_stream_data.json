@@ -1,0 +1,22 @@
+[
+{
+    "model": "twitter.stream",
+    "pk": 1,
+    "fields": {
+        "receiver": 1,
+        "tweet": 1,
+        "stream_type": "T",
+        "stream_date": "2017-05-14T21:27:34.560Z"
+    }
+},
+{
+    "model": "twitter.stream",
+    "pk": 2,
+    "fields": {
+        "receiver": 2,
+        "tweet": 1,
+        "stream_type": "T",
+        "stream_date": "2017-05-14T21:27:34.562Z"
+    }
+}
+]
