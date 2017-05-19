@@ -52,28 +52,6 @@ def post_tweet(request):
         'form': form,
     })
 
-
-
-
-
-
-
-
-
-
-
-# TODO
 def explore(request):
-    user_list = User.objects.all()
-    tweet_list = []
-    tweets = []
-    if user_list:
-        for user in user_list:
-            if user.tweet_set.all():
-                tweet_list.append(user.tweet_set.all()[0])
-    paginate_by = 10
-    tweets, show_pagination = share.pagination(request, tweet_list, paginate_by)
-    return render(request, 'twitter/explore.html', {
-        'tweets': tweets,
-        'show_pagination': show_pagination,
-    })
+    render_data = page.explore(request)
+    return render(request, 'twitter/explore.html', render_data)

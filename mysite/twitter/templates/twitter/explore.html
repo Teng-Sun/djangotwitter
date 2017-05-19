@@ -1,10 +1,33 @@
 {% extends "./base.html" %}
 
 {% block main %}
+    {% with leasts as tweets %}
+        <h3>The least tweets</h3>
+        {% include './tweet_list.html' %}
+    {% endwith %}
+
+    {% with likes as tweets %}
+        <h3>The most liked tweets</h3>
+        {% include './tweet_list.html' %}
+    {% endwith %}
+
+    {% with retweets as tweets %}
+        <h3>The most retweets tweets</h3>
+        {% include './tweet_list.html' %}
+    {% endwith %}
+
+    {% with replies as tweets %}
+        <h3>The most replied tweets</h3>
+        {% include './tweet_list.html' %}
+    {% endwith %}
+
+
+    {% comment %}
     <a href="{% url 'post_tweet' %}">
       <button class="btn button-base-color">
         <span class="glyphicon glyphicon-edit"></span>
         <span>Tweet Now</span>
       </button>
     </a>
+    {% endcomment %}
 {% endblock %}

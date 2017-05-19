@@ -66,3 +66,19 @@ def been_retweeted(tweet, user):
 
 def been_liked(tweet, user):
     return bool(Like.objects.filter(tweet=tweet, author=user))
+
+def max_num(tweets, field_name):
+    num = 0
+    for t in tweets:
+        count = getattr(t, field_name) 
+        if count > num:
+            num = count
+    return num
+
+def select_tweet(tweets, field_name, results, login_user):
+    num = max_num(tweets, field_name)
+    tweet = Tweet.objects.filter(**{field_name: num}).first()
+    if tweet:
+        results.append(tweet)
+        get_action_data(tweet, login_user)
+    return results
