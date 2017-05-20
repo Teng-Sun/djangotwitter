@@ -92,3 +92,19 @@ class PostTest(TestCase):
         ]
         for t, user, result in data:
             self.assertEqual(post.been_liked(t, user), result)
+
+    def test_max_index(self):
+        tweets = [self.tweet_a, self.a_like_a, self.tweet_no_reply]
+        selected_index = post.max_index(tweets, 'like_num')
+        self.assertEqual(selected_index, 0)
+
+    def test_select_tweet(self):
+        tweets = [
+            self.tweet_a,
+            self.a_like_a,
+            self.tweet_no_reply
+        ]
+        results = []
+        results_should = [self.tweet_a]
+        post.select_tweet(tweets, 'like_num', self.admin, results)
+        self.assertEqual(results, results_should)

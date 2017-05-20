@@ -8,7 +8,7 @@
         "created_date": "2017-05-04T22:01:01.209Z",
         "original_tweet": null,
         "retweet_num": 1,
-        "like_num": 0,
+        "like_num": 2,
         "reply_num": 2
     }
 },
@@ -34,7 +34,7 @@
         "created_date": "2017-05-04T22:03:46.209Z",
         "original_tweet": null,
         "retweet_num": 0,
-        "like_num": 0,
+        "like_num": 2,
         "reply_num": 0
     }
 },
@@ -60,7 +60,7 @@
         "created_date": "2017-05-04T22:05:01.209Z",
         "original_tweet": null,
         "retweet_num": 1,
-        "like_num": 0,
+        "like_num": 1,
         "reply_num": 0
     }
 },
@@ -73,7 +73,7 @@
         "created_date": "2017-05-04T22:06:01.209Z",
         "original_tweet": null,
         "retweet_num": 1,
-        "like_num": 0,
+        "like_num": 1,
         "reply_num": 0
     }
 },

@@ -114,13 +114,12 @@ def explore(request):
     retweets = []
     replies = []
     for user in users:
-        tweets = Tweet.objects.filter(author=user, original_tweet__isnull=False)
+        tweets = Tweet.objects.filter(author=user, original_tweet__isnull=True)
         if tweets and tweets.first:
             leasts.append(tweets.first)
-        post.select_tweet(tweets, 'like_num', likes, login_user)
-        post.select_tweet(tweets, 'retweet_num', retweets, login_user)
-        post.select_tweet(tweets, 'reply_num', replies, login_user)
-
+        post.select_tweet(tweets, 'like_num', login_user, likes)
+        post.select_tweet(tweets, 'retweet_num', login_user, retweets)
+        post.select_tweet(tweets, 'reply_num', login_user, replies)
     return {
         'leasts': leasts,
         'likes': likes,
