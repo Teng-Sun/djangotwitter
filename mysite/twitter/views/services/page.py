@@ -4,6 +4,8 @@ from django.shortcuts import get_object_or_404
 from twitter.models import Tweet, Stream, Followship, Like, Notification
 from . import post, share, notify, profile_nav
 
+import datetime
+
 def index(request):
     user = request.user
     stream_list = []
@@ -118,3 +120,17 @@ def explore(request):
         'retweets': retweets,
         'replies': replies
     }
+
+def today(request):
+    now = timezone.now()
+    date = datetime.datetime(now.year, now.month, now.day)
+    today = timezone.make_aware(date)
+    todays = Tweet.objects.filter(
+        created_date__gte=today
+    )
+    for t in todays:
+        post.get_action_data(t, request.user)
+    return {
+        'todays': todays,
+    }
+

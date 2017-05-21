@@ -4,6 +4,12 @@ from twitter.views import pages, tweets, users
 
 urlpatterns = [
     url(r'^$', pages.index, name='index'),
+
+    url(r'^moment/today$', pages.today, name='today'),
+
+
+
+    
     url(r'^notification/$', pages.notification, name='notification'),
     url(r'^profile/(?P<username>\w+)/$', pages.profile, name='profile'),
     url(r'^tweet/$', pages.post_tweet, name='post_tweet'),
