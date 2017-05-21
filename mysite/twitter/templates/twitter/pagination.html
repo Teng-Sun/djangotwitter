@@ -1,15 +1,15 @@
-{% if show_pagination %}
-<div class="pagination">
-  <span class="step-links">
-    {% if object_list.has_previous %}
-      <a href="?page={{object_list.previous_page_number}}">&lt;&lt;</a>
-    {% endif %}
-  </span>
-  <span class="current">
-    Page {{ object_list.number }} of {{ object_list.paginator.num_pages}}
-    {% if object_list.has_next %}
-      <a href="?page={{ object_list.next_page_number }}">&gt;&gt;</a>
-    {% endif %}
-  </span>
-</div>
+{% if pagination_result.paginator.num_pages > 1 %}
+  <div class="pagination">
+    <span class="step-links">
+      {% if pagination_result.has_previous %}
+        <a href="?page={{pagination_result.previous_page_number}}">&lt;&lt;</a>
+      {% endif %}
+    </span>
+    <span class="current">
+      Page {{ pagination_result.number }} of {{ pagination_result.paginator.num_pages }}
+      {% if pagination_result.has_next %}
+        <a href="?page={{ pagination_result.next_page_number }}">&gt;&gt;</a>
+      {% endif %}
+    </span>
+  </div>
 {% endif %}

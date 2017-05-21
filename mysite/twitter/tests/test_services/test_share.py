@@ -6,8 +6,7 @@ from twitter.views.services import share
 
 
 class ShareTest(TestCase):
-
-
+    
     def test_pagination(self):
         c = Client()
         response = c.get('/profile/admin')
@@ -15,11 +14,11 @@ class ShareTest(TestCase):
         object_list = [
             1, 2, 3, 4, 5, 6, 7
         ]
-
         data = [
-            (3, True),
-            (7, False)
+            (3, 3),
+            (7, 1)
         ]
-        for item, show in data:
-            text, show_should = share.pagination(request, object_list, item)
-            self.assertEqual(show_should, show)
+
+        for by, num in data:
+            text = share.pagination(request, object_list, by)
+            self.assertEqual(text.paginator.num_pages, num)

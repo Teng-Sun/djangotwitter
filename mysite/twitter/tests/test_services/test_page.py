@@ -29,7 +29,5 @@ class PageTest(TestCase):
         login(request, self.admin)
         render_data = page.index(request)
         streams = render_data['stream_list']
-        self.assertEqual(streams, render_data['object_list'])
         for s in streams:
             self.assertEqual(s.tweet, self.stream_1.tweet)
-        self.assertEqual(render_data['show_pagination'], False)
