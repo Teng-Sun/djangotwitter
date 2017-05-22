@@ -129,8 +129,11 @@ def today(request):
         created_date__gte=today
     )
     todays = post.tweets_actions(tweets, request.user)
+    paginate_by = 10
+    items = share.pagination(request, todays, paginate_by)
     return {
-        'items': todays,
+        'items': items,
+        'pagination_result': items,
     }
 
 def top(request):
@@ -138,22 +141,31 @@ def top(request):
         ).order_by(
         '-retweet_num', '-created_date')
     tops = post.tweets_actions(tweets, request.user)
+    paginate_by = 10
+    items = share.pagination(request, tops, paginate_by)
     return {
-        'items': tops
+        'items': items,
+        'pagination_result': items,
     }
 
 def engagement(request):
     tweets = Tweet.objects.order_by(
         '-reply_num', '-created_date')
     engagements = post.tweets_actions(tweets, request.user)
+    paginate_by = 10
+    items = share.pagination(request, engagements, paginate_by)
     return {
-        'items': engagements
+        'items': items,
+        'pagination_result': items,
     }
 
 def favorite(request):
     tweets = Tweet.objects.filter(original_tweet__isnull=True
         ).order_by('-like_num', '-created_date')
     favorites = post.tweets_actions(tweets, request.user)
+    paginate_by = 10
+    items = share.pagination(request, favorites, paginate_by)
     return {
-        'items': favorites
+        'items': items,
+        'pagination_result': items,
     }

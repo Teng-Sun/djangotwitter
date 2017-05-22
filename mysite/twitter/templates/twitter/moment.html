@@ -1,8 +1,9 @@
-{% extends "twitter/base.html" %}
+{% extends "./base.html" %}
 
 {% block main %}
-    {% include 'twitter/moment_nav.html' %}
+    {% include './moment_nav.html' %}
     {% with items as tweets %}
-        {% include 'twitter/tweet_list.html' %}
+        {% include './tweet_list.html' %}
     {% endwith %}
+    {% include './pagination.html' %}
 {% endblock %}
