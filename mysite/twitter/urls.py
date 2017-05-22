@@ -6,7 +6,7 @@ urlpatterns = [
     url(r'^$', pages.index, name='index'),
 
     url(r'^moment/today$', pages.today, name='today'),
-
+    url(r'^moment/top$', pages.top, name='top'),
 
 
     

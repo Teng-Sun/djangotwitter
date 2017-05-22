@@ -17,6 +17,10 @@ def today(request):
     render_data = page.today(request)
     return render(request, 'twitter/moment/today.html', render_data)
 
+def top(request):
+    render_data = page.top(request)
+    return render(request, 'twitter/moment/top.html', render_data)
+
 def notification(request):
     render_data = page.notification(request)
     return render(request, 'twitter/notification.html', render_data)

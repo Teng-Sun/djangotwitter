@@ -134,3 +134,14 @@ def today(request):
         'todays': todays,
     }
 
+def top(request):
+    threshold = 10
+    tops = Tweet.objects.filter(
+        retweet_num__gte=threshold
+        ).order_by('retweet_num')
+    for t in tops:
+        post.get_action_data(t, request.user)
+    return {
+        'tops': tops
+    }
+
