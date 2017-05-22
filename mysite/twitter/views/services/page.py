@@ -125,41 +125,35 @@ def today(request):
     now = timezone.now()
     date = datetime.datetime(now.year, now.month, now.day)
     today = timezone.make_aware(date)
-    todays = Tweet.objects.filter(
+    tweets = Tweet.objects.filter(
         created_date__gte=today
     )
-    for t in todays:
-        post.get_action_data(t, request.user)
+    todays = post.tweets_actions(tweets, request.user)
     return {
-        'todays': todays,
+        'items': todays,
     }
 
 def top(request):
-    threshold = 10
-    tops = Tweet.objects.filter(
-        retweet_num__gte=threshold
-        ).order_by('retweet_num')
-    for t in tops:
-        post.get_action_data(t, request.user)
+    tweets = Tweet.objects.filter(original_tweet__isnull=True
+        ).order_by(
+        '-retweet_num', '-created_date')
+    tops = post.tweets_actions(tweets, request.user)
     return {
-        'tops': tops
+        'items': tops
     }
 
 def engagement(request):
-    engagements = Tweet.objects.order_by('-reply_num', '-created_date').all()
-    for t in engagements:
-        post.get_action_data(t, request.user)
+    tweets = Tweet.objects.order_by(
+        '-reply_num', '-created_date')
+    engagements = post.tweets_actions(tweets, request.user)
     return {
-        'engagements': engagements
+        'items': engagements
     }
 
 def favorite(request):
-    favorites = Tweet.objects.filter(original_tweet__isnull=True
-        ).order_by('-like_num', '-created_date').all()
-    for t in favorites:
-        print 't.like_num', t.like_num
-        post.get_action_data(t, request.user)
+    tweets = Tweet.objects.filter(original_tweet__isnull=True
+        ).order_by('-like_num', '-created_date')
+    favorites = post.tweets_actions(tweets, request.user)
     return {
-        'favorites': favorites
+        'items': favorites
     }
-

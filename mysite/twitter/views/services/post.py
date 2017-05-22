@@ -26,6 +26,11 @@ def get_action_data(tweet, user):
         tweet.has_been_liked = False
         tweet.has_been_retweeded = False
 
+def tweets_actions(tweets, user):
+    for t in tweets:
+        get_action_data(t, user)
+    return tweets
+
 def show_tweets(tweet_list, visited_user, login_user):
     tweets = []
     for tweet in tweet_list:

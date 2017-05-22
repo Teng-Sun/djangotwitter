@@ -1,8 +1,8 @@
 {% extends "twitter/base.html" %}
 
 {% block main %}
-    {% include './nav.html' %}
-    {% with todays as tweets %}
+    {% include 'twitter/moment_nav.html' %}
+    {% with items as tweets %}
         {% include 'twitter/tweet_list.html' %}
     {% endwith %}
 {% endblock %}

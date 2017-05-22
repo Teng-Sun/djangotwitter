@@ -1,8 +1,0 @@
-{% extends "twitter/base.html" %}
-
-{% block main %}
-    {% include './nav.html' %}
-    {% with tops as tweets %}
-        {% include 'twitter/tweet_list.html' %}
-    {% endwith %}
-{% endblock %}
