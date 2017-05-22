@@ -1,0 +1,8 @@
+{% extends "twitter/base.html" %}
+
+{% block main %}
+    {% include './nav.html' %}
+    {% with engagements as tweets %}
+        {% include 'twitter/tweet_list.html' %}
+    {% endwith %}
+{% endblock %}

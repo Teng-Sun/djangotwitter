@@ -21,6 +21,14 @@ def top(request):
     render_data = page.top(request)
     return render(request, 'twitter/moment/top.html', render_data)
 
+def engagement(request):
+    render_data = page.engagement(request)
+    return render(request, 'twitter/moment/engagement.html', render_data)
+
+def favorite(request):
+    render_data = page.favorite(request)
+    return render(request, 'twitter/moment/favorite.html', render_data)
+
 def notification(request):
     render_data = page.notification(request)
     return render(request, 'twitter/notification.html', render_data)

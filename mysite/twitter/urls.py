@@ -7,7 +7,8 @@ urlpatterns = [
 
     url(r'^moment/today$', pages.today, name='today'),
     url(r'^moment/top$', pages.top, name='top'),
-
+    url(r'^moment/engagement$', pages.engagement, name='engagement'),
+    url(r'^moment/favorite$', pages.favorite, name='favorite'),
 
     
     url(r'^notification/$', pages.notification, name='notification'),

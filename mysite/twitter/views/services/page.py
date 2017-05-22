@@ -145,3 +145,21 @@ def top(request):
         'tops': tops
     }
 
+def engagement(request):
+    engagements = Tweet.objects.order_by('-reply_num', '-created_date').all()
+    for t in engagements:
+        post.get_action_data(t, request.user)
+    return {
+        'engagements': engagements
+    }
+
+def favorite(request):
+    favorites = Tweet.objects.filter(original_tweet__isnull=True
+        ).order_by('-like_num', '-created_date').all()
+    for t in favorites:
+        print 't.like_num', t.like_num
+        post.get_action_data(t, request.user)
+    return {
+        'favorites': favorites
+    }
+
