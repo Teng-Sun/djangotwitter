@@ -6,6 +6,8 @@ from twitter.models import Tweet, Replyship, Like, Notification, Stream
 from twitter.forms import TweetForm
 from services import notify, stream, post
 
+from twitter.signals import tweet
+
 @login_required
 def retweet(request, tweet_id):
     tweet = Tweet.objects.get(pk=tweet_id)
@@ -14,10 +16,6 @@ def retweet(request, tweet_id):
     original_tweet = post.get_original(tweet)
 
     if not Tweet.objects.filter(author=user, original_tweet=original_tweet):
-
-        original_tweet.retweet_num += 1
-        original_tweet.save()
-        print original_tweet.retweet_num
 
         new_tweet = post.create_tweet(user, original_tweet.content, original_tweet)
 
@@ -33,10 +31,7 @@ def unretweet(request, tweet_id):
     user = request.user
 
     original_tweet = post.get_original(tweet)
-
-    if Tweet.objects.filter(author=user, original_tweet=original_tweet):
-        original_tweet.retweet_num -= 1
-        original_tweet.save()
+    if post.been_retweeted(original_tweet, user):
         tweet.delete()
 
     return redirect(request.META.get('HTTP_REFERER'))
@@ -60,9 +55,6 @@ def reply(request, tweet_id):
             )
             replyship.save()
 
-            original_tweet.reply_num += 1
-            original_tweet.save()
-
             notify.notify_reply(reply, original_tweet)
 
             stream.create_streams(reply, Stream.REPLY)
@@ -81,9 +73,6 @@ def like(request, tweet_id):
             tweet = original_tweet,
         )
         new_like.save()
-        original_tweet.like_num += 1
-        original_tweet.save()
-
         notify.notify(user, original_tweet, Notification.LIKE)
     return redirect(request.META.get('HTTP_REFERER'))
 
@@ -95,8 +84,6 @@ def unlike(request, tweet_id):
     like = Like.objects.get(tweet=original_tweet, author=user)
     if like:
         like.delete()
-        original_tweet.like_num -= 1
-        original_tweet.save()
 
     return redirect(request.META.get('HTTP_REFERER'))
 
@@ -106,9 +93,6 @@ def delete(request, tweet_id):
     if tweet and tweet.author == request.user:
         original_tweet = post.get_original(tweet)
         replyship = Replyship.objects.filter(reply=original_tweet)
-        if replyship:
-            replyship[0].tweet.reply_num -= 1
-            replyship[0].tweet.save()
         original_tweet.delete()
     
     return redirect(request.META.get('HTTP_REFERER'))
